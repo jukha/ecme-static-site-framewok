@@ -18,7 +18,7 @@ interface Params {
 
 // Defines the props structure for the StaticDocPage component.
 interface StaticDocPageProps {
-    params: Params
+    params: Promise<Params>
 }
 
 // Defines the expected structure of the front matter in Markdown files.
@@ -66,11 +66,16 @@ export async function generateStaticParams(): Promise<Params[]> {
     const filenames: string[] = readContentDir(contentDirectory)
 
     // Filter for files ending with .md or .html and map them to 'slug' parameters.
-    const params: Params[] = filenames
+     const params: Params[] = filenames
         .filter((name) => name.endsWith('.md') || name.endsWith('.html'))
-        .map((filename) => ({
-            slug: filename.replace(/\.(md|html)$/, '').split('/'), // Extracts the base name (e.g., 'about' from 'about.md')
-        }))
+        .map((filename) => {
+            // Minimal Change 2: Calculate relative path before splitting
+            const relativePath = path.relative(contentDirectory, filename);
+            return {
+                // Minimal Change 3: Use path.sep for cross-platform compatibility
+                slug: relativePath.replace(/\.(md|html)$/, '').split(path.sep), 
+            };
+        })
 
     return params
 }

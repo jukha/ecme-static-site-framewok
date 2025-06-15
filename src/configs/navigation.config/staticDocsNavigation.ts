@@ -1,57 +1,119 @@
-
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 
 import {
-    NAV_ITEM_TYPE_TITLE,
+    // NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
     NAV_ITEM_TYPE_COLLAPSE,
-} from '@/constants/navigation.constant'; 
+} from '@/constants/navigation.constant'
 
-import type { NavigationTree } from '@/@types/navigation'; 
+import type { NavigationTree } from '@/@types/navigation'
 
 // Function to dynamically get static doc items
-function getStaticDocItems(): NavigationTree[] {
-    const contentDirectory = path.join(process.cwd(), 'content');
-    const filenames = fs.readdirSync(contentDirectory);
+function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
+    const items: NavigationTree[] = []
 
-    const docItems: NavigationTree[] = filenames
-        .filter(name => name.endsWith('.md') || name.endsWith('.html'))
-        .map((filename) => {
-            const slug = filename.replace(/\.(md|html)$/, '');
-            let title = slug; // Default title
-            let translateKey = `nav.staticDocs.${slug}`; // Default translate key
+    try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true })
 
-            // Try to read title from Markdown front matter
-            if (filename.endsWith('.md')) {
-                const filePath = path.join(contentDirectory, filename);
-                const fileContents = fs.readFileSync(filePath, 'utf8');
-                const { data: frontMatter } = matter(fileContents);
-                if (frontMatter.title) {
-                    title = frontMatter.title;
-                    // You might adjust translateKey if frontMatter has a specific one
-                    // translateKey = frontMatter.translateKey || translateKey;
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name)
+            const relativePath = path.relative(
+                path.join(process.cwd(), 'content'),
+                fullPath,
+            )
+
+            if (entry.isDirectory()) {
+                // Handle directories - create submenu
+                const subMenuItems = getStaticDocItems(fullPath, basePath)
+
+                if (subMenuItems.length > 0) {
+                    const dirName = entry.name
+                    const dirPath = `${basePath}/${relativePath.replace(/\\/g, '/')}`
+
+                    items.push({
+                        key: `staticDocs.${relativePath.replace(/[/\\]/g, '.')}`,
+                        path: dirPath,
+                        title:
+                            dirName.charAt(0).toUpperCase() + dirName.slice(1),
+                        translateKey: `nav.staticDocs.${relativePath.replace(/[/\\]/g, '.')}`,
+                        icon: '',
+                        type: NAV_ITEM_TYPE_COLLAPSE,
+                        authority: [],
+                        subMenu: subMenuItems,
+                    })
                 }
+            } else if (
+                entry.isFile() &&
+                (entry.name.endsWith('.md') || entry.name.endsWith('.html'))
+            ) {
+                // Handle files
+                const slug = entry.name.replace(/\.(md|html)$/, '')
+                const filePath = `${basePath}/${relativePath.replace(/\.(md|html)$/, '').replace(/\\/g, '/')}`
+
+                let title = slug
+                const translateKey = `nav.staticDocs.${relativePath.replace(/[/\\]/g, '.').replace(/\.(md|html)$/, '')}`
+
+                // Extract title from front matter for .md files
+                if (entry.name.endsWith('.md')) {
+                    try {
+                        const fileContents = fs.readFileSync(fullPath, 'utf8')
+                        const { data: frontMatter } = matter(fileContents)
+                        if (frontMatter.title) {
+                            title = frontMatter.title
+                        }
+                    } catch (error) {
+                        console.warn(
+                            `Failed to read front matter from ${fullPath}:`,
+                            error,
+                        )
+                    }
+                }
+
+                // Extract title from HTML files
+                if (entry.name.endsWith('.html')) {
+                    try {
+                        const fileContents = fs.readFileSync(fullPath, 'utf8')
+                        const titleMatch = fileContents.match(
+                            /<title[^>]*>([^<]+)<\/title>/i,
+                        )
+                        if (titleMatch && titleMatch[1]) {
+                            title = titleMatch[1].trim()
+                        }
+                    } catch (error) {
+                        console.warn(
+                            `Failed to read title from ${fullPath}:`,
+                            error,
+                        )
+                    }
+                }
+
+                items.push({
+                    key: `staticDocs.${relativePath.replace(/[/\\]/g, '.').replace(/\.(md|html)$/, '')}`,
+                    path: filePath,
+                    title: title,
+                    translateKey: translateKey,
+                    icon: '',
+                    type: NAV_ITEM_TYPE_ITEM,
+                    authority: [],
+                    subMenu: [],
+                })
             }
-            // For HTML files, you might need a more complex way to get a title
-            // or rely on the filename.
+        }
+    } catch (error) {
+        console.error(`Error reading directory ${dir}:`, error)
+    }
 
-            return {
-                key: `staticDocs.${slug}`,
-                path: `/docs/${slug}`,
-                title: title,
-                translateKey: translateKey,
-                icon: '', // <<<<<< ADDED: Required icon property for individual items
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [],
-                subMenu: [],
-            };
-        });
-
-    return docItems;
+    // Sort items: directories first, then files, both alphabetically
+    return items.sort((a, b) => {
+        if (a.type === NAV_ITEM_TYPE_COLLAPSE && b.type === NAV_ITEM_TYPE_ITEM)
+            return -1
+        if (a.type === NAV_ITEM_TYPE_ITEM && b.type === NAV_ITEM_TYPE_COLLAPSE)
+            return 1
+        return a.title.localeCompare(b.title)
+    })
 }
-
 
 const staticDocsNavigationConfig: NavigationTree = {
     key: 'staticDocs',
@@ -61,7 +123,7 @@ const staticDocsNavigationConfig: NavigationTree = {
     icon: 'documentation', // <<<<<< Keep this icon for the main collapse menu
     type: NAV_ITEM_TYPE_COLLAPSE,
     authority: [],
-    subMenu: getStaticDocItems(), // Dynamically populate subMenu
-};
+    subMenu: getStaticDocItems('content'), // Dynamically populate subMenu
+}
 
-export default staticDocsNavigationConfig;
+export default staticDocsNavigationConfig

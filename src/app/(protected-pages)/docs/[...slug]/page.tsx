@@ -13,7 +13,7 @@ import parse from 'html-react-parser' // Library to safely parse and render raw 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
 interface Params {
-    slug: string // The dynamic part of the URL (e.g., 'about' for /docs/about)
+    slug: string[] // The dynamic part of the URL (e.g., 'about' for /docs/about)
 }
 
 // Defines the props structure for the StaticDocPage component.
@@ -28,6 +28,33 @@ interface FrontMatter {
     [key: string]: unknown // Allows for additional, arbitrary properties in front matter
 }
 
+const readContentDir = (contentDir: string) => {
+    let filenames: string[] = []
+
+    try {
+        // Read all filenames from the 'content' directory.
+        const entries = fs.readdirSync(contentDir, { withFileTypes: true })
+
+        for (const entry of entries) {
+            if (entry.isDirectory()) {
+                // Recursively read subdirectories
+                const nestedFilenames = readContentDir(
+                    path.join(contentDir, entry.name),
+                )
+                filenames = filenames.concat(nestedFilenames)
+            } else {
+                // Add filenames to the list
+                filenames.push(path.join(contentDir, entry.name))
+            }
+        }
+
+        return filenames
+    } catch (error) {
+        console.error('Error reading content directory:', error)
+        return []
+    }
+}
+
 // --- generateStaticParams Function ---
 // This Next.js App Router function is crucial for Static Site Generation (SSG).
 // It tells Next.js which dynamic paths ([slug]) should be pre-rendered into static HTML
@@ -36,26 +63,13 @@ export async function generateStaticParams(): Promise<Params[]> {
     // Construct the absolute path to the 'content' directory at the project root.
     const contentDirectory = path.join(process.cwd(), 'content')
 
-    let filenames: string[] = []
-    try {
-        // Read all filenames from the 'content' directory.
-        filenames = fs.readdirSync(contentDirectory)
-    } catch (error) {
-        console.error(
-            `Error reading content directory at ${contentDirectory}:`,
-            error,
-        )
-        // If the directory doesn't exist or is empty, return an empty array.
-        // Next.js will then not generate any static params for this route,
-        // which might lead to 404s for expected pages if content is indeed missing.
-        return []
-    }
+    const filenames: string[] = readContentDir(contentDirectory)
 
     // Filter for files ending with .md or .html and map them to 'slug' parameters.
     const params: Params[] = filenames
         .filter((name) => name.endsWith('.md') || name.endsWith('.html'))
         .map((filename) => ({
-            slug: filename.replace(/\.(md|html)$/, ''), // Extracts the base name (e.g., 'about' from 'about.md')
+            slug: filename.replace(/\.(md|html)$/, '').split('/'), // Extracts the base name (e.g., 'about' from 'about.md')
         }))
 
     return params
@@ -68,8 +82,16 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
     const { slug } = await params
 
     // Construct full paths for both potential Markdown and HTML files.
-    const mdFilePath = path.join(process.cwd(), 'content', `${slug}.md`)
-    const htmlFilePath = path.join(process.cwd(), 'content', `${slug}.html`)
+    const mdFilePath = path.join(
+        process.cwd(),
+        'content',
+        `${slug.join('/')}.md`,
+    )
+    const htmlFilePath = path.join(
+        process.cwd(),
+        'content',
+        `${slug.join('/')}.html`,
+    )
 
     let fileContents: string = '' // Stores raw content read from file
     let frontMatter: FrontMatter = {} // Stores parsed front matter for Markdown

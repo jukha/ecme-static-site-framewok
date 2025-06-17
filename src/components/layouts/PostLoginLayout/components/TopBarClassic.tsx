@@ -1,13 +1,17 @@
 'use client'
 
-import Header from '@/components/template/Header'
-import UserProfileDropdown from '@/components//template/UserProfileDropdown'
-import HeaderLogo from '@/components/template/HeaderLogo'
-import MobileNav from '@/components/template/MobileNav'
-import HorizontalNav from '@/components/template/HorizontalNav'
-import LayoutBase from '@/components//template/LayoutBase'
-import { LAYOUT_TOP_BAR_CLASSIC } from '@/constants/theme.constant'
 import type { CommonProps } from '@/@types/common'
+import LayoutBase from '@/components//template/LayoutBase'
+import Header from '@/components/template/Header'
+import HeaderLogo from '@/components/template/HeaderLogo'
+import HorizontalNav from '@/components/template/HorizontalNav'
+import LanguageSelector from '@/components/template/LanguageSelector'
+import MobileNav from '@/components/template/MobileNav'
+import Search from '@/components/template/Search'
+import SidePanel from '@/components/template/SidePanel'
+import { LAYOUT_TOP_BAR_CLASSIC } from '@/constants/theme.constant'
+import Link from 'next/link'
+import { FaGithub } from 'react-icons/fa'
 
 const TopBarClassic = ({ children }: CommonProps) => {
     return (
@@ -29,7 +33,17 @@ const TopBarClassic = ({ children }: CommonProps) => {
                         headerMiddle={<HorizontalNav />}
                         headerEnd={
                             <>
-                                <UserProfileDropdown hoverable={false} />
+                                <Search />
+                                <LanguageSelector />
+                                <Link
+                                    href={'https://github.com/ZuzNet'}
+                                    className="text-2xl"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    <FaGithub />
+                                </Link>
+                                <SidePanel />
                             </>
                         }
                     />

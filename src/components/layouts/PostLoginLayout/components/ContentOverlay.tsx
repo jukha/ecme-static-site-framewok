@@ -1,16 +1,18 @@
 'use client'
 
-import Header from '@/components/template/Header'
-import UserProfileDropdown from '@/components//template/UserProfileDropdown'
-import HeaderLogo from '@/components/template/HeaderLogo'
-import MobileNav from '@/components/template/MobileNav'
-import HorizontalNav from '@/components/template/HorizontalNav'
+import type { CommonProps } from '@/@types/common'
 import LayoutBase from '@/components//template/LayoutBase'
+import type { FooterPageContainerType } from '@/components/template/Footer'
+import Header from '@/components/template/Header'
+import HeaderLogo from '@/components/template/HeaderLogo'
+import HorizontalNav from '@/components/template/HorizontalNav'
+import LanguageSelector from '@/components/template/LanguageSelector'
+import MobileNav from '@/components/template/MobileNav'
+import Search from '@/components/template/Search'
+import SidePanel from '@/components/template/SidePanel'
+import { LAYOUT_CONTENT_OVERLAY } from '@/constants/theme.constant'
 import classNames from '@/utils/classNames'
 import useScrollTop from '@/utils/hooks/useScrollTop'
-import { LAYOUT_CONTENT_OVERLAY } from '@/constants/theme.constant'
-import type { CommonProps } from '@/@types/common'
-import type { FooterPageContainerType } from '@/components/template/Footer'
 
 const ContentOverlay = ({ children }: CommonProps) => {
     const { isSticky } = useScrollTop()
@@ -110,7 +112,9 @@ const ContentOverlay = ({ children }: CommonProps) => {
                         headerMiddle={<HorizontalNav />}
                         headerEnd={
                             <>
-                                <UserProfileDropdown hoverable={false} />
+                                <Search />
+                                <LanguageSelector />
+                                <SidePanel />
                             </>
                         }
                     />

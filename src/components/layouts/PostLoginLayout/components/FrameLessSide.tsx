@@ -1,17 +1,21 @@
 'use client'
 
-import SideNav from '@/components/template/SideNav'
-import Header from '@/components/template/Header'
-import FrameLessGap from '@/components/template/FrameLessGap'
-import MobileNav from '@/components/template/MobileNav'
-import SideNavToggle from '@/components/template/SideNavToggle'
-import UserProfileDropdown from '@/components//template/UserProfileDropdown'
+import type { CommonProps } from '@/@types/common'
 import LayoutBase from '@/components//template/LayoutBase'
+import SidePanel from '@/components//template/SidePanel'
+import type { FooterPageContainerType } from '@/components/template/Footer'
+import FrameLessGap from '@/components/template/FrameLessGap'
+import Header from '@/components/template/Header'
+import LanguageSelector from '@/components/template/LanguageSelector'
+import MobileNav from '@/components/template/MobileNav'
+import Search from '@/components/template/Search'
+import SideNav from '@/components/template/SideNav'
+import SideNavToggle from '@/components/template/SideNavToggle'
+import { LAYOUT_FRAMELESS_SIDE } from '@/constants/theme.constant'
 import classNames from '@/utils/classNames'
 import useScrollTop from '@/utils/hooks/useScrollTop'
-import { LAYOUT_FRAMELESS_SIDE } from '@/constants/theme.constant'
-import type { CommonProps } from '@/@types/common'
-import type { FooterPageContainerType } from '@/components/template/Footer'
+import Link from 'next/link'
+import { FaGithub } from 'react-icons/fa'
 
 const FrameLessSide = ({ children }: CommonProps) => {
     const { isSticky } = useScrollTop()
@@ -91,11 +95,21 @@ const FrameLessSide = ({ children }: CommonProps) => {
                                 <>
                                     <MobileNav />
                                     <SideNavToggle />
+                                    <Search />
                                 </>
                             }
                             headerEnd={
                                 <>
-                                    <UserProfileDropdown hoverable={false} />
+                                    <LanguageSelector />
+                                    <Link
+                                        href={'https://github.com/ZuzNet'}
+                                        className="text-2xl"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        <FaGithub />
+                                    </Link>
+                                    <SidePanel />
                                 </>
                             }
                         />

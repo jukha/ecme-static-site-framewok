@@ -10,6 +10,11 @@ import {
 
 import type { NavigationTree } from '@/@types/navigation'
 
+const staticDocsNavigationIcons = {
+    documentation: 'documentation',
+    examples: 'examplesicon',
+}
+
 // Function to dynamically get static doc items
 function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
     const items: NavigationTree[] = []
@@ -38,7 +43,11 @@ function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
                         title:
                             dirName.charAt(0).toUpperCase() + dirName.slice(1),
                         translateKey: `nav.staticDocs.${relativePath.replace(/[/\\]/g, '.')}`,
-                        icon: '',
+                        icon: staticDocsNavigationIcons.hasOwnProperty(dirName)
+                            ? staticDocsNavigationIcons[
+                                  dirName as keyof typeof staticDocsNavigationIcons
+                              ]
+                            : '',
                         type: NAV_ITEM_TYPE_COLLAPSE,
                         authority: [],
                         subMenu: subMenuItems,
@@ -115,15 +124,8 @@ function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
     })
 }
 
-const staticDocsNavigationConfig: NavigationTree = {
-    key: 'staticDocs',
-    path: '', // This is a collapse menu, so no direct path
-    title: 'Documentation',
-    translateKey: 'nav.staticDocs',
-    icon: 'documentation', // <<<<<< Keep this icon for the main collapse menu
-    type: NAV_ITEM_TYPE_COLLAPSE,
-    authority: [],
-    subMenu: getStaticDocItems('content'), // Dynamically populate subMenu
-}
+const staticDocsNavigationConfig: NavigationTree[] =
+    getStaticDocItems('content')
+// Dynamically populate subMenu
 
 export default staticDocsNavigationConfig

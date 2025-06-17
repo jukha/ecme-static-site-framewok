@@ -16,7 +16,7 @@ const staticDocsNavigationIcons = {
 }
 
 // Function to dynamically get static doc items
-function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
+function getStaticDocItems(dir: string, basePath = ''): NavigationTree[] {
     const items: NavigationTree[] = []
 
     try {

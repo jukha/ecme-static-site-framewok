@@ -8,11 +8,9 @@ import type { NavigationTree } from '@/@types/navigation'
 // Import our new static docs navigation
 import staticDocsNavigationConfig from './staticDocsNavigation' // Adjust path if needed
 
-console.dir(staticDocsNavigationConfig, { depth: 10 })
-
 const navigationConfig: NavigationTree[] = [
     // --- ADD OUR STATIC DOCS NAVIGATION HERE ---
-    staticDocsNavigationConfig,
+    ...staticDocsNavigationConfig,
 
     {
         key: 'vaults',

@@ -53,6 +53,7 @@ function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
                 const filePath = `${basePath}/${relativePath.replace(/\.(md|html)$/, '').replace(/\\/g, '/')}`
 
                 let title = slug
+                let icon = ''
                 const translateKey = `nav.staticDocs.${relativePath.replace(/[/\\]/g, '.').replace(/\.(md|html)$/, '')}`
 
                 // Extract title from front matter for .md files
@@ -62,6 +63,9 @@ function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
                         const { data: frontMatter } = matter(fileContents)
                         if (frontMatter.title) {
                             title = frontMatter.title
+                        }
+                        if (frontMatter.icon) {
+                            icon = frontMatter.icon
                         }
                     } catch (error) {
                         console.warn(
@@ -94,7 +98,7 @@ function getStaticDocItems(dir: string, basePath = '/docs'): NavigationTree[] {
                     path: filePath,
                     title: title,
                     translateKey: translateKey,
-                    icon: '',
+                    icon: icon || '',
                     type: NAV_ITEM_TYPE_ITEM,
                     authority: [],
                     subMenu: [],

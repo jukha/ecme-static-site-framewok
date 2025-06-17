@@ -1,21 +1,19 @@
-import classNames from 'classnames'
-import Segment from '@/components/ui/Segment'
-import useTheme from '@/utils/hooks/useTheme'
-import {
-    LAYOUT_COLLAPSIBLE_SIDE,
-    LAYOUT_STACKED_SIDE,
-    LAYOUT_TOP_BAR_CLASSIC,
-    LAYOUT_FRAMELESS_SIDE,
-    LAYOUT_CONTENT_OVERLAY,
-    LAYOUT_BLANK,
-} from '@/constants/theme.constant'
+import type { LayoutType } from '@/@types/theme'
 import CollapsibleSideSvg from '@/assets/svg/CollapsibleSideSvg'
+import ContentOverlaySvg from '@/assets/svg/ContentOverlaySvg'
+import FrameLessSideSvg from '@/assets/svg/FrameLessSideSvg'
 import StackedSideSvg from '@/assets/svg/StackedSideSvg'
 import TopBarClassicSvg from '@/assets/svg/TopBarClassicSvg'
-import FrameLessSideSvg from '@/assets/svg/FrameLessSideSvg'
-import ContentOverlaySvg from '@/assets/svg/ContentOverlaySvg'
-import BlankSvg from '@/assets/svg/BlankSvg'
-import type { LayoutType } from '@/@types/theme'
+import Segment from '@/components/ui/Segment'
+import {
+    LAYOUT_COLLAPSIBLE_SIDE,
+    LAYOUT_CONTENT_OVERLAY,
+    LAYOUT_FRAMELESS_SIDE,
+    LAYOUT_STACKED_SIDE,
+    LAYOUT_TOP_BAR_CLASSIC
+} from '@/constants/theme.constant'
+import useTheme from '@/utils/hooks/useTheme'
+import classNames from 'classnames'
 
 const layouts = [
     {
@@ -52,13 +50,6 @@ const layouts = [
         src: '/img/thumbs/layouts/decked.jpg',
         srcDark: '/img/thumbs/layouts/decked-dark.jpg',
         svg: <ContentOverlaySvg height={'100%'} width={'100%'} />,
-    },
-    {
-        value: LAYOUT_BLANK,
-        label: 'Blank',
-        src: '/img/thumbs/layouts/blank.jpg',
-        srcDark: '/img/thumbs/layouts/blank-dark.jpg',
-        svg: <BlankSvg height={'100%'} width={'100%'} />,
     },
 ]
 

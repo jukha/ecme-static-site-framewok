@@ -1,7 +1,7 @@
+import VerticalMenuIcon from '@/components/template/VerticalMenuContent/VerticalMenuIcon'
 import classNames from 'classnames'
-import type { CommonProps } from '../@types/common'
 import type { ElementType, Ref } from 'react'
-import { PiDotOutlineFill } from 'react-icons/pi'
+import type { CommonProps } from '../@types/common'
 
 export interface MenuItemProps extends CommonProps {
     asElement?: ElementType
@@ -13,6 +13,7 @@ export interface MenuItemProps extends CommonProps {
     menuItemHeight?: string | number
     onSelect?: (eventKey: string, e: MouseEvent) => void
     ref?: Ref<HTMLElement>
+    icon: string
 }
 
 const MenuItem = (props: MenuItemProps) => {
@@ -27,9 +28,12 @@ const MenuItem = (props: MenuItemProps) => {
         menuItemHeight = 42,
         onSelect,
         ref,
+        icon,
         style,
         ...rest
     } = props
+
+    console.log(props)
 
     const menuItemActiveClass = `menu-item-active`
     const menuItemHoverClass = `menu-item-hoverable`
@@ -39,7 +43,7 @@ const MenuItem = (props: MenuItemProps) => {
         isActive && menuItemActiveClass,
         disabled && disabledClass,
         !disabled && menuItemHoverClass,
-        dotIndent && 'items-center gap-2',
+        dotIndent && 'items-center gap-2 ',
         className,
     )
 
@@ -59,13 +63,14 @@ const MenuItem = (props: MenuItemProps) => {
         >
             {dotIndent ? (
                 <>
-                    <div>
-                        <PiDotOutlineFill
+                    <div className="pl-3">
+                        <VerticalMenuIcon icon={icon} />
+                        {/* <PiDotOutlineFill
                             className={classNames(
                                 'text-3xl w-[24px]',
                                 !isActive && 'opacity-25',
                             )}
-                        />
+                        /> */}
                     </div>
                     {children}
                 </>

@@ -92,7 +92,7 @@ const DefaultItem = (props: DefaultItemProps) => {
 
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
-            <MenuItem key={nav.key} eventKey={nav.key} dotIndent={indent}>
+            <MenuItem key={nav.key} eventKey={nav.key} dotIndent={indent} icon={nav.icon}>
                 <Link
                     href={nav.path}
                     className="flex items-center gap-2 h-full w-full"

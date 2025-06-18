@@ -1,24 +1,23 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import classNames from '@/utils/classNames'
-import withHeaderItem from '@/utils/hoc/withHeaderItem'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import ScrollBar from '@/components/ui/ScrollBar'
-import navigationIcon from '@/configs/navigation-icon.config'
 import { apiGetSearchResult } from '@/services/CommonService'
+import classNames from '@/utils/classNames'
+import withHeaderItem from '@/utils/hoc/withHeaderItem'
 import debounce from 'lodash/debounce'
-import { HiOutlineSearch, HiChevronRight } from 'react-icons/hi'
-import { PiMagnifyingGlassDuotone } from 'react-icons/pi'
 import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
 import Highlighter from 'react-highlight-words'
+import { HiChevronRight, HiOutlineSearch } from 'react-icons/hi'
+import { PiMagnifyingGlassDuotone } from 'react-icons/pi'
 
 type SearchData = {
     key: string
     path: string
     title: string
-    icon: string
+    icon?: string
     category: string
     categoryTitle: string
 }
@@ -36,14 +35,14 @@ const recommendedSearch: SearchResult[] = [
 ]
 
 const ListItem = (props: {
-    icon: string
+    icon?: string
     label: string
     url: string
     isLast?: boolean
     keyWord: string
     onNavigate: () => void
 }) => {
-    const { icon, label, url = '', keyWord, onNavigate } = props
+    const {  label, url = '', keyWord, onNavigate } = props
 
     return (
         <Link href={url} onClick={onNavigate}>
@@ -54,13 +53,13 @@ const ListItem = (props: {
                 )}
             >
                 <div className="flex items-center gap-2">
-                    <div
+                    {/* <div
                         className={classNames(
                             'rounded-lg border-2 border-gray-200 shadow-xs text-xl group-hover:shadow-sm h-10 w-10 flex items-center justify-center bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100',
                         )}
                     >
                         {icon && navigationIcon[icon]}
-                    </div>
+                    </div> */}
                     <div className="text-gray-900 dark:text-gray-300">
                         <Highlighter
                             autoEscape
@@ -177,7 +176,7 @@ const _Search = ({ className }: { className?: string }) => {
                                     {result.data.map((data, index) => (
                                         <ListItem
                                             key={data.title + index}
-                                            icon={data.icon}
+                                            // icon={data.icon}
                                             label={data.title}
                                             url={data.path}
                                             keyWord={

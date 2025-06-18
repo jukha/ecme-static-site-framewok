@@ -7,6 +7,7 @@ import Dropdown from '@/components/ui/Dropdown'
 import type { CommonProps } from '@/@types/common'
 import type { Direction } from '@/@types/theme'
 import type { NavigationTree, TranslationFn } from '@/@types/navigation'
+import { usePathname } from 'next/navigation'
 
 const { MenuItem } = Menu
 
@@ -90,9 +91,17 @@ const DefaultItem = (props: DefaultItemProps) => {
         t,
     } = props
 
+    const pathname = usePathname()
+
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
-            <MenuItem key={nav.key} eventKey={nav.key} dotIndent={indent} icon={nav.icon}>
+            <MenuItem
+                key={nav.key}
+                eventKey={nav.key}
+                dotIndent={indent}
+                icon={nav.icon}
+                isActive={nav.path === pathname}
+            >
                 <Link
                     href={nav.path}
                     className="flex items-center gap-2 h-full w-full"

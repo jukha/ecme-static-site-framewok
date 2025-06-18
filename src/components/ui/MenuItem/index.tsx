@@ -33,8 +33,6 @@ const MenuItem = (props: MenuItemProps) => {
         ...rest
     } = props
 
-    console.log(props)
-
     const menuItemActiveClass = `menu-item-active`
     const menuItemHoverClass = `menu-item-hoverable`
     const disabledClass = 'menu-item-disabled'

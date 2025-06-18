@@ -99,7 +99,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         `${slug.join('/')}.html`,
     )
 
-   let fileContents: string = '' // Stores raw content read from file
+    let fileContents: string = '' // Stores raw content read from file
     let frontMatter: FrontMatter = {} // Stores parsed front matter for Markdown
     let contentHtml: string = '' // Stores the final HTML string to be rendered
     let isHtml: boolean = false // Flag to determine if original file was HTML
@@ -116,7 +116,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
             fileContents = fs.readFileSync(htmlFilePath, 'utf8')
             contentHtml = fileContents
             isHtml = true
-        } 
+        }
         // If neither file exists for the given slug, display a 'Not Found' message.
         // For statically generated pages, generateStaticParams should prevent reaching here
         // for non-existent slugs. This acts as a fallback for dynamic scenarios or unexpected issues.
@@ -145,35 +145,39 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
     }
 
     return (
-        <div className="prose dark:prose-invert max-w-none mx-auto p-8">
-            {frontMatter?.title && <h1>{frontMatter.title}</h1>}
+        <div className="max-w-5xl">
+            <div className="prose dark:prose-invert max-w-none mx-auto p-8">
+                {frontMatter?.title && <h1>{frontMatter.title}</h1>}
 
-            {isHtml ? (
-                <div>{parse(contentHtml)}</div>
-            ) : (
-                <ReactMarkdown
-                    components={{
-                        code({ className, children, ...props }) {
-                            const match = /language-(\w+)/.exec(className || '')
-                            return match ? (
-                                <SyntaxHighlighter
-                                    language={match[1]}
-                                    PreTag="div"
-                                    style={dracula}
-                                >
-                                    {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                            ) : (
-                                <code className={className} {...props}>
-                                    {children}
-                                </code>
-                            )
-                        },
-                    }}
-                >
-                    {contentHtml}
-                </ReactMarkdown>
-            )}
+                {isHtml ? (
+                    <div>{parse(contentHtml)}</div>
+                ) : (
+                    <ReactMarkdown
+                        components={{
+                            code({ className, children, ...props }) {
+                                const match = /language-(\w+)/.exec(
+                                    className || '',
+                                )
+                                return match ? (
+                                    <SyntaxHighlighter
+                                        language={match[1]}
+                                        PreTag="div"
+                                        style={dracula}
+                                    >
+                                        {String(children).replace(/\n$/, '')}
+                                    </SyntaxHighlighter>
+                                ) : (
+                                    <code className={className} {...props}>
+                                        {children}
+                                    </code>
+                                )
+                            },
+                        }}
+                    >
+                        {contentHtml}
+                    </ReactMarkdown>
+                )}
+            </div>
         </div>
     )
 }

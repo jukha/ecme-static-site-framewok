@@ -1,0 +1,366 @@
+- key: landing
+  path: /home
+  title: Home
+  translateKey: nav.landing
+  icon: homeicon
+  type: ITEM
+  authority: []
+  meta:
+    description:
+      translateKey: nav.chatDesc
+      label: Landing Page
+  subMenu: []
+
+- key: vaults
+  path: ""
+  title: Vaults
+  translateKey: nav.vaults
+  icon: vaults
+  type: COLLAPSE
+  authority: []
+  subMenu:
+    - key: vaults.create
+      path: /vaults/create
+      title: Create
+      translateKey: nav.vaults.create
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: createicon
+
+    - key: vaults.status
+      path: /vaults/status
+      title: Status
+      translateKey: nav.vaults.status
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: statusicon
+
+- key: monitors
+  path: ""
+  title: Monitors
+  translateKey: nav.monitors
+  icon: monitorsicon
+  type: COLLAPSE
+  authority: []
+  subMenu:
+    - key: monitors.network
+      path: /monitors/network
+      title: Network
+      translateKey: nav.monitors.network
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: networkicon
+
+    - key: monitors.stats
+      path: /monitors/stats
+      title: Statistics
+      translateKey: nav.monitors.stats
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: statisticsicon
+
+- key: validators
+  path: ""
+  title: Validators
+  translateKey: nav.validators
+  icon: validators
+  type: COLLAPSE
+  authority: []
+  subMenu:
+    - key: validators.dashboard
+      path: /validators/dashboard
+      title: Dashboard
+      translateKey: nav.validators.dashboard
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: dashboardicon
+
+    - key: validators.voting
+      path: /validators/voting
+      title: Voting
+      translateKey: nav.validators.voting
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: votingicon
+
+    - key: validators.tests
+      path: /validators/tests
+      title: Tests
+      translateKey: nav.validators.tests
+      type: ITEM
+      authority: []
+      subMenu: []
+      icon: testsicon
+
+- key: dao
+  path: ""
+  title: DAO
+  translateKey: nav.dao
+  icon: daoicon
+  type: COLLAPSE
+  authority: []
+  meta:
+    description:
+      translateKey: nav.dao.daoDesc
+      label: Decentralized governance
+  subMenu:
+    - key: dao.structure
+      path: /dao/structure
+      title: Structure
+      translateKey: nav.dao.structure
+      icon: structureicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.dao.structureDesc
+          label: Organization hierarchy
+      subMenu: []
+
+    - key: dao.governance
+      path: /dao/governance
+      title: Governance
+      translateKey: nav.dao.governance
+      icon: governanceicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.dao.governanceDesc
+          label: Proposals and voting
+      subMenu: []
+
+- key: Legal
+  path: ""
+  title: Legal & Compliance
+  translateKey: nav.Legal
+  icon: law
+  type: COLLAPSE
+  authority: []
+  meta:
+    description:
+      translateKey: nav.legal.legalDesc
+      label: Legal
+  subMenu:
+    - key: legal.legal
+      path: /legal-and-compliance/legal-doc
+      title: Legal Doc
+      translateKey: nav.legal.legal
+      icon: legalicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.legal.legal
+          label: Create new Legal Doc
+      subMenu: []
+
+- key: documentation
+  path: ""
+  title: Documentation
+  translateKey: nav.documentation
+  icon: documentation
+  type: COLLAPSE
+  authority: []
+  meta:
+    description:
+      translateKey: nav.documentationDesc
+      label: Technical documentation
+  subMenu:
+    - key: documentation.installation
+      path: /documentation/installation
+      title: Installation
+      translateKey: nav.documentation.installation
+      icon: installationicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.documentation.installationDesc
+          label: Setup instructions
+      subMenu: []
+
+    - key: documentation.vault-file-structure
+      path: /documentation/vault-file-structure
+      title: Vault File Structure
+      translateKey: nav.documentation.vault-file-structure
+      icon: universal
+      type: ITEM
+      authority: []
+      meta:
+      description:
+        translateKey: nav.documentation.vault-file-structure
+      subMenu: []
+
+    - key: documentation.protocol
+      path: /documentation/protocol
+      title: Protocol
+      translateKey: nav.documentation.protocol
+      icon: protocolicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.documentation.protocolDesc
+          label: Technical specifications
+      subMenu: []
+
+    - key: documentation.privacy
+      path: /documentation/privacy
+      title: Privacy
+      translateKey: nav.documentation.privacy
+      icon: privacyicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.documentation.PrivacyDesc
+          label: Privacy
+      subMenu: []
+
+    - key: documentation.api
+      path: /documentation/api
+      title: API
+      translateKey: nav.documentation.api
+      icon: apiicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.documentation.api
+          label: API
+      subMenu: []
+
+    - key: documentation.sdk
+      path: /documentation/sdk
+      title: SDK
+      translateKey: nav.documentation.sdk
+      icon: sdkicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.documentation.sdkDesc
+          label: Privacy
+      subMenu: []
+
+- key: helpCenter
+  path: ""
+  title: Help Center
+  translateKey: nav.helpCenter
+  icon: helpCenter
+  type: COLLAPSE
+  authority: []
+  meta:
+    description:
+      translateKey: nav.helpCenter.helpCenterDesc
+      label: Support and articles
+  subMenu:
+    - key: helpCenter.tutorial
+      path: /help-center/tutorial
+      title: Tutorial
+      translateKey: nav.helpCenter.tutorial
+      icon: tutorialicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.tutorial
+          label: Central support hub
+      subMenu: []
+
+    - key: helpCenter.userGuide
+      path: /help-center/user-guide
+      title: User Guide
+      translateKey: nav.helpCenter.userGuide
+      icon: userguideicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.userGuide
+          label: Central support hub
+      subMenu: []
+
+    - key: helpCenter.FAQ
+      path: /help-center/faqs
+      title: FAQ
+      translateKey: nav.helpCenter.FAQ
+      icon: faqicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.FAQ
+          label: Central support hub
+      subMenu: []
+
+    - key: helpCenter.examples
+      path: /help-center/examples
+      title: Examples
+      translateKey: nav.helpCenter.examples
+      icon: examplesicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.examples
+          label: Central support hub
+      subMenu: []
+
+    - key: helpCenter.useCases
+      path: /help-center/use-cases
+      title: Use Cases
+      translateKey: nav.helpCenter.useCases
+      icon: usecasesicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.useCases
+          label: Central support hub
+      subMenu: []
+
+    - key: helpCenter.zuz-dsl
+      path: /help-center/zuz-dsl
+      title: Zuz Dsl
+      translateKey: nav.helpCenter.zuz-dsl
+      icon: zuzdslicon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.helpCenter.zuz-dsl
+          label: Central support hub
+      subMenu: []
+
+- key: about
+  path: ""
+  title: About
+  translateKey: nav.About
+  icon: about
+  type: COLLAPSE
+  authority: []
+  meta:
+    description:
+      translateKey: nav.about.aboutDesc
+      label: About
+  subMenu:
+    - key: about.about
+      path: /about/about-doc
+      title: About Doc
+      translateKey: nav.about.about
+      icon: abouticon
+      type: ITEM
+      authority: []
+      meta:
+        description:
+          translateKey: nav.about.about
+          label: Create new About Docs
+      subMenu: []

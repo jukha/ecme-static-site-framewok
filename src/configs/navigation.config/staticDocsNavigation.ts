@@ -15,6 +15,15 @@ const staticDocsNavigationIcons = {
     examples: 'examplesicon',
 }
 
+export function formatDirectoryTitle(dirName: string): string {
+    return dirName
+        .toLowerCase()
+        .split(/[-&]/) // Split on '-' or '&'
+        .map(word => word.trim().charAt(0).toUpperCase() + word.trim().slice(1))
+        .join(' '); // No separator to remove hyphen/&
+}
+
+
 // Function to dynamically get static doc items
 function getStaticDocItems(dir: string, basePath = ''): NavigationTree[] {
     const items: NavigationTree[] = []
@@ -40,14 +49,15 @@ function getStaticDocItems(dir: string, basePath = ''): NavigationTree[] {
                     items.push({
                         key: `staticDocs.${relativePath.replace(/[/\\]/g, '.')}`,
                         path: dirPath,
-                        title:
-                            dirName.charAt(0).toUpperCase() + dirName.slice(1),
+                        // title:
+                        //     dirName.charAt(0).toUpperCase() + dirName.slice(1),
+                        title: formatDirectoryTitle(dirName),
                         translateKey: `nav.staticDocs.${relativePath.replace(/[/\\]/g, '.')}`,
                         icon: staticDocsNavigationIcons.hasOwnProperty(dirName)
                             ? staticDocsNavigationIcons[
                                   dirName as keyof typeof staticDocsNavigationIcons
                               ]
-                            : '',
+                            : 'documentation',
                         type: NAV_ITEM_TYPE_COLLAPSE,
                         authority: [],
                         subMenu: subMenuItems,

@@ -6,8 +6,9 @@
 import fs from 'fs' // Node.js File System module for reading files (server-side only)
 import path from 'path' // Node.js Path module for handling file paths (server-side only)
 import matter from 'gray-matter' // Library to parse YAML front matter from Markdown files
-import { remark } from 'remark' // Core Markdown processor
-import html from 'remark-html' // Remark plugin to convert Markdown AST to HTML string
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
 
 // --- Type Definitions ---
@@ -66,15 +67,15 @@ export async function generateStaticParams(): Promise<Params[]> {
     const filenames: string[] = readContentDir(contentDirectory)
 
     // Filter for files ending with .md or .html and map them to 'slug' parameters.
-     const params: Params[] = filenames
+    const params: Params[] = filenames
         .filter((name) => name.endsWith('.md') || name.endsWith('.html'))
         .map((filename) => {
             // Minimal Change 2: Calculate relative path before splitting
-            const relativePath = path.relative(contentDirectory, filename);
+            const relativePath = path.relative(contentDirectory, filename)
             return {
                 // Minimal Change 3: Use path.sep for cross-platform compatibility
-                slug: relativePath.replace(/\.(md|html)$/, '').split(path.sep), 
-            };
+                slug: relativePath.replace(/\.(md|html)$/, '').split(path.sep),
+            }
         })
 
     return params
@@ -98,7 +99,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         `${slug.join('/')}.html`,
     )
 
-    let fileContents: string = '' // Stores raw content read from file
+   let fileContents: string = '' // Stores raw content read from file
     let frontMatter: FrontMatter = {} // Stores parsed front matter for Markdown
     let contentHtml: string = '' // Stores the final HTML string to be rendered
     let isHtml: boolean = false // Flag to determine if original file was HTML
@@ -107,20 +108,15 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         // Attempt to read and process the Markdown file first.
         if (fs.existsSync(mdFilePath)) {
             fileContents = fs.readFileSync(mdFilePath, 'utf8')
-            const { data: fm, content } = matter(fileContents) // Parse front matter and Markdown content
+            const { data: fm, content } = matter(fileContents)
             frontMatter = fm as FrontMatter // Type assertion for type safety
-
-            // Use remark with remark-html to convert Markdown content to an HTML string.
-            const processedContent = await remark().use(html).process(content)
-            contentHtml = processedContent.toString()
+            contentHtml = content // Store the raw markdown content
             isHtml = false
-        }
-        // If no Markdown file, check for an HTML file.
-        else if (fs.existsSync(htmlFilePath)) {
+        } else if (fs.existsSync(htmlFilePath)) {
             fileContents = fs.readFileSync(htmlFilePath, 'utf8')
-            contentHtml = fileContents // For HTML, the raw content is the HTML to render
+            contentHtml = fileContents
             isHtml = true
-        }
+        } 
         // If neither file exists for the given slug, display a 'Not Found' message.
         // For statically generated pages, generateStaticParams should prevent reaching here
         // for non-existent slugs. This acts as a fallback for dynamic scenarios or unexpected issues.
@@ -144,27 +140,39 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                     An error occurred while trying to load the page for &quot;
                     {slug}&quot;.
                 </p>
-                {/* In development, you might show error.message for debugging */}
-                {/* <p className="text-sm">{error instanceof Error ? error.message : String(error)}</p> */}
             </div>
         )
     }
 
     return (
-        // The 'prose' and 'dark:prose-invert' classes are from Tailwind CSS Typography plugin.
-        // They automatically style raw HTML content (like h1, p, ul, ol) beautifully.
-        // 'max-w-none' ensures it takes full available width, 'mx-auto' centers it, 'p-8' adds padding.
         <div className="prose dark:prose-invert max-w-none mx-auto p-8">
-            {/* Conditionally display the title from Markdown front matter */}
             {frontMatter?.title && <h1>{frontMatter.title}</h1>}
 
             {isHtml ? (
-                // For HTML files, use 'html-react-parser' to safely convert the HTML string into React elements.
                 <div>{parse(contentHtml)}</div>
             ) : (
-                // For Markdown files, use 'dangerouslySetInnerHTML' to inject the pre-converted HTML string.
-                // This is safe here because 'remark-html' guarantees the output is well-formed HTML.
-                <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+                <ReactMarkdown
+                    components={{
+                        code({ className, children, ...props }) {
+                            const match = /language-(\w+)/.exec(className || '')
+                            return match ? (
+                                <SyntaxHighlighter
+                                    language={match[1]}
+                                    PreTag="div"
+                                    style={dracula}
+                                >
+                                    {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                            ) : (
+                                <code className={className} {...props}>
+                                    {children}
+                                </code>
+                            )
+                        },
+                    }}
+                >
+                    {contentHtml}
+                </ReactMarkdown>
             )}
         </div>
     )

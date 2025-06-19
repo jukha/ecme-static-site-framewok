@@ -13,7 +13,7 @@ Before you can add pages or make changes to the website, you need to set up the 
 
     ```bash
     git clone https://github.com/jukha/ecme-static-site-framewok.git
-    cd your-project
+    cd ecme-static-site-framewok
 
     ```
 

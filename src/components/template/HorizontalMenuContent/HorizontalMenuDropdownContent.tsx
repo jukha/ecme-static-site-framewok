@@ -17,6 +17,7 @@ import type {
     TranslationFn,
 } from '@/@types/navigation'
 import type { ReactNode, HTMLProps } from 'react'
+import { usePathname } from 'next/navigation'
 
 interface LayoutProps extends CommonProps {
     navigationTree: NavigationTree[]
@@ -119,7 +120,9 @@ const MenuLink = ({
                 <Avatar
                     className={classNames(
                         'bg-white dark:bg-transparent p-2 border-2 border-gray-200 dark:border-gray-600',
-                        active ? 'text-primary' : 'text-gray-900 dark:text-gray-100',
+                        active
+                            ? 'text-primary'
+                            : 'text-gray-900 dark:text-gray-100',
                     )}
                     size={40}
                     icon={icon}
@@ -268,6 +271,7 @@ const DefaultLayout = ({
     routeKey,
     userAuthority,
 }: LayoutProps) => {
+    const pathname = usePathname()
     const renderNavigation = (navTree: NavigationTree[], cascade: number) => {
         const nextCascade = cascade + 1
 
@@ -281,7 +285,12 @@ const DefaultLayout = ({
                     >
                         <ul>
                             {nav.type === NAV_ITEM_TYPE_ITEM && (
-                                <Dropdown.Item active={routeKey === nav.key}>
+                                <Dropdown.Item
+                                    active={
+                                        routeKey === nav.key ||
+                                        pathname === nav.path
+                                    }
+                                >
                                     <HorizontalMenuNavLink
                                         path={nav.path}
                                         isExternalLink={nav.isExternalLink}

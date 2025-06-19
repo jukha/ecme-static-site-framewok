@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
+import Head from 'next/head'
 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
@@ -144,8 +145,13 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         )
     }
 
+    // set page title
+
     return (
         <div className="max-w-5xl">
+            <Head>
+                <title>{frontMatter.title}</title>
+            </Head>
             <div className="prose dark:prose-invert max-w-none mx-auto p-8">
                 {frontMatter?.title && <h1>{frontMatter.title}</h1>}
 
@@ -187,21 +193,32 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
 // based on the content of the page, which is crucial for SEO and browser tabs.
 export async function generateMetadata({ params }: StaticDocPageProps) {
     const { slug } = await params
-    const mdFilePath = path.join(process.cwd(), 'content', `${slug}.md`)
-    const htmlFilePath = path.join(process.cwd(), 'content', `${slug}.html`)
 
-    let pageTitle = 'Document' // Default title if no specific title is found
+    const mdFilePath = path.join(
+        process.cwd(),
+        'content',
+        `${slug.join('/')}.md`,
+    )
+
+    const htmlFilePath = path.join(
+        process.cwd(),
+        'content',
+        `${slug.join('/')}.html`,
+    )
+
+    let pageTitle = 'Documentation' // Default title if no specific title is found
 
     try {
         if (fs.existsSync(mdFilePath)) {
             const fileContents = fs.readFileSync(mdFilePath, 'utf8')
             const { data: frontMatter } = matter(fileContents)
-            pageTitle = (frontMatter as FrontMatter).title || `Doc: ${slug}`
+            pageTitle =
+                (frontMatter as FrontMatter).title || slug[slug.length - 1]
         } else if (fs.existsSync(htmlFilePath)) {
             // For HTML files, extracting the title programmatically can be more complex.
             // You could potentially parse the HTML string to find the <title> tag,
             // but for simplicity, we'll use a generic title or the slug here.
-            pageTitle = `HTML Doc: ${slug}`
+            pageTitle = slug[slug.length - 1]
         }
     } catch (error) {
         console.error(`Error generating metadata for slug: ${slug}`, error)
@@ -209,7 +226,7 @@ export async function generateMetadata({ params }: StaticDocPageProps) {
     }
 
     return {
-        title: pageTitle,
+        title: pageTitle.replaceAll('-', ' '),
         // You can add other meta tags here, e.g., description, keywords, etc.
         // description: frontMatter.description || `Content for ${slug}`,
     }

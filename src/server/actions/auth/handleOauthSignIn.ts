@@ -1,6 +1,6 @@
 'use server'
 
-import { signIn } from '@/auth'
+import { signIn } from '@/_auth'
 import appConfig from '@/configs/app.config'
 
 const handleOauthSignIn = async (

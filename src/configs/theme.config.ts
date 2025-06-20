@@ -6,7 +6,7 @@ import type { Theme } from '@/@types/theme'
  * we recommend to use the configuration that generated from demo.
  */
 export const themeConfig: Theme = {
-    themeSchema: '',
+    themeSchema: 'orange',
     direction: THEME_ENUM.DIR_LTR,
     mode: THEME_ENUM.MODE_LIGHT,
     panelExpand: false,
@@ -16,3 +16,5 @@ export const themeConfig: Theme = {
         sideNavCollapse: false,
     },
 }
+
+

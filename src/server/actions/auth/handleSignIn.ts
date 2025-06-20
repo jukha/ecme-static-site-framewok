@@ -1,6 +1,6 @@
 'use server'
 
-import { signIn } from '@/auth'
+import { signIn } from '@/_auth'
 import appConfig from '@/configs/app.config'
 import { AuthError } from 'next-auth'
 import type { SignInCredential } from '@/@types/auth'

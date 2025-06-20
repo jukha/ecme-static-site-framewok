@@ -60,6 +60,7 @@ const StackedSideNav = ({
 
     const handleCollpase = () => {
         setSelectedMenu({})
+
         setActiveKeys([])
     }
 

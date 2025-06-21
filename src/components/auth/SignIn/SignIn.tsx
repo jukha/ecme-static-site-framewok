@@ -34,7 +34,7 @@ const SignIn = ({
                     type="streamline"
                     mode={mode}
                     logoWidth={60}
-                    logoHeight={60}
+                    // logoHeight={60}
                 />
             </div>
             <div className="mb-10">

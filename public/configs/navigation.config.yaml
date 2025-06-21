@@ -262,7 +262,7 @@
       translateKey: nav.helpCenter.helpCenterDesc
       label: Support and articles
   subMenu:
-    - key: helpCenter.tutorial
+    - key: help-center.tutorial
       path: /help-center/tutorial
       title: Tutorial
       translateKey: nav.helpCenter.tutorial

@@ -4,14 +4,28 @@ import ThemeProvider from '@/components/template/Theme/ThemeProvider'
 import pageMetaConfig from '@/configs/page-meta.config'
 import LocaleProvider from '@/components/template/LocaleProvider'
 import NavigationProvider from '@/components/template/Navigation/NavigationProvider'
-import { getNavigation } from '@/server/actions/navigation/getNavigation'
+// import { getNavigation } from '@/server/actions/navigation/getNavigation'
 import { getTheme } from '@/server/actions/theme'
 import { getLocale, getMessages } from 'next-intl/server'
 import type { ReactNode } from 'react'
 import '@/assets/styles/app.css'
+import { loadNavigationConfig } from '@/configs/navigation.config'
+import { NavigationTree } from '@/@types/navigation'
 
 export const metadata = {
     ...pageMetaConfig,
+}
+
+interface Params {
+    nav: NavigationTree[] // The dynamic part of the URL (e.g., 'about' for /docs/about)
+}
+
+export function generateStaticParams(): Params {
+    const navConfigs = loadNavigationConfig()
+
+    console.log('😀😀😀😀', navConfigs)
+
+    return { nav: navConfigs }
 }
 
 export default async function RootLayout({
@@ -25,7 +39,9 @@ export default async function RootLayout({
 
     const messages = await getMessages()
 
-    const navigationTree = await getNavigation()
+    // const navigationTree = (await params).nav
+    const navigationTree = loadNavigationConfig()
+    console.log('navigationTree😀😀😀😀😀😀😀😀😀', navigationTree)
 
     const theme = await getTheme()
 

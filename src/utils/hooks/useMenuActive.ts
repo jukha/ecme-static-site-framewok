@@ -14,7 +14,6 @@ const getRouteInfo = (
     navTree: NavInfo | NavInfo[],
     key: string,
 ): NavInfo | undefined => {
-    console.log('navTree', navTree);
     if (!Array.isArray(navTree) && navTree.key === key) {
         return navTree
     }

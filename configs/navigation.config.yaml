@@ -1,4 +1,4 @@
-- key: landing
+- key: home     
   path: /home
   title: Home
   translateKey: nav.landing
@@ -7,7 +7,7 @@
   authority: []
   meta:
     description:
-      translateKey: nav.chatDesc
+      translateKey: nav.chatDesc  
       label: Landing Page
   subMenu: []
 
@@ -136,7 +136,7 @@
           label: Proposals and voting
       subMenu: []
 
-- key: Legal
+- key: legal-and-compliance
   path: ""
   title: Legal & Compliance
   translateKey: nav.Legal
@@ -148,7 +148,7 @@
       translateKey: nav.legal.legalDesc
       label: Legal
   subMenu:
-    - key: legal.legal
+    - key: legal-and-compliance.legal-doc
       path: /legal-and-compliance/legal-doc
       title: Legal Doc
       translateKey: nav.legal.legal
@@ -250,7 +250,7 @@
           label: Privacy
       subMenu: []
 
-- key: helpCenter
+- key: help-center
   path: ""
   title: Help Center
   translateKey: nav.helpCenter
@@ -262,7 +262,7 @@
       translateKey: nav.helpCenter.helpCenterDesc
       label: Support and articles
   subMenu:
-    - key: helpCenter.tutorial
+    - key: help-center.tutorial
       path: /help-center/tutorial
       title: Tutorial
       translateKey: nav.helpCenter.tutorial
@@ -275,7 +275,7 @@
           label: Central support hub
       subMenu: []
 
-    - key: helpCenter.userGuide
+    - key: help-center.userGuide
       path: /help-center/user-guide
       title: User Guide
       translateKey: nav.helpCenter.userGuide
@@ -288,7 +288,7 @@
           label: Central support hub
       subMenu: []
 
-    - key: helpCenter.FAQ
+    - key: help-center.FAQ
       path: /help-center/faqs
       title: FAQ
       translateKey: nav.helpCenter.FAQ
@@ -301,7 +301,7 @@
           label: Central support hub
       subMenu: []
 
-    - key: helpCenter.examples
+    - key: help-center.examples
       path: /help-center/examples
       title: Examples
       translateKey: nav.helpCenter.examples
@@ -314,7 +314,7 @@
           label: Central support hub
       subMenu: []
 
-    - key: helpCenter.useCases
+    - key: help-center.useCases
       path: /help-center/use-cases
       title: Use Cases
       translateKey: nav.helpCenter.useCases
@@ -327,7 +327,7 @@
           label: Central support hub
       subMenu: []
 
-    - key: helpCenter.zuz-dsl
+    - key: help-center.zuz-dsl
       path: /help-center/zuz-dsl
       title: Zuz Dsl
       translateKey: nav.helpCenter.zuz-dsl

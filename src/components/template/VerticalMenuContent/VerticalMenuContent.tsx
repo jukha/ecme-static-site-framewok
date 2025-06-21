@@ -126,7 +126,10 @@ const VerticalMenuContent = (props: VerticalMenuContentProps) => {
                             >
                                 <MenuGroup
                                     key={nav.key}
-                                    label={t(nav.translateKey, nav.title) || nav.title}
+                                    label={
+                                        t(nav.translateKey, nav.title) ||
+                                        nav.title
+                                    }
                                 >
                                     {nav.subMenu &&
                                         nav.subMenu.length > 0 &&

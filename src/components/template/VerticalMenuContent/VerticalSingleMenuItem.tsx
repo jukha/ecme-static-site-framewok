@@ -92,6 +92,8 @@ const DefaultItem = (props: DefaultItemProps) => {
     } = props
 
     const pathname = usePathname()
+    const menuItemActiveClass = `menu-item-active`
+    const isActive = pathname === nav.path
 
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
@@ -100,7 +102,7 @@ const DefaultItem = (props: DefaultItemProps) => {
                 eventKey={nav.key}
                 dotIndent={indent}
                 icon={nav.icon}
-                isActive={nav.path === pathname}
+                className={isActive ? menuItemActiveClass : ''}
             >
                 <Link
                     href={nav.path}

@@ -1,7 +1,7 @@
 - key: home
   path: /home
   title: Home
-  translateKey: nav.landing
+  translateKey: nav.home
   icon: homeicon
   type: ITEM
   authority: []

@@ -11,6 +11,14 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
 import Head from 'next/head'
+import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import rehypeRaw from 'rehype-raw'
+import rehypeHighlight from 'rehype-highlight'
+
+import 'katex/dist/katex.min.css' // Optional: For math rendering
 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
@@ -159,6 +167,12 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                     <div>{parse(contentHtml)}</div>
                 ) : (
                     <ReactMarkdown
+                        remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+                        rehypePlugins={[
+                            rehypeRaw,
+                            rehypeKatex,
+                            rehypeHighlight,
+                        ]}
                         components={{
                             code({ className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(
@@ -178,6 +192,44 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                                     </code>
                                 )
                             },
+                            table: ({ ...props }) => (
+                                <div className="overflow-x-auto my-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                                    <table
+                                        className="min-w-full !m-0 divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900"
+                                        {...props}
+                                    />
+                                </div>
+                            ),
+                            thead: ({ ...props }) => (
+                                <thead
+                                    className="bg-gray-50 dark:bg-gray-800"
+                                    {...props}
+                                />
+                            ),
+                            th: ({ ...props }) => (
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 dark:text-gray-400 uppercase tracking-wider border border-gray-200 dark:border-gray-700"
+                                    {...props}
+                                />
+                            ),
+                            tbody: ({ ...props }) => (
+                                <tbody
+                                    className="divide-y divide-gray-200 dark:divide-gray-700"
+                                    {...props}
+                                />
+                            ),
+                            tr: ({ ...props }) => (
+                                <tr
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 ease-in-out"
+                                    {...props}
+                                />
+                            ),
+                            td: ({ ...props }) => (
+                                <td
+                                    className="px-6 py-3 whitespace-normal text-sm text-gray-900 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+                                    {...props}
+                                />
+                            ),
                         }}
                     >
                         {contentHtml}

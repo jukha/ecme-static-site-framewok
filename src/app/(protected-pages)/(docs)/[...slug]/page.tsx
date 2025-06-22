@@ -11,6 +11,14 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
 import Head from 'next/head'
+import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import rehypeRaw from 'rehype-raw'
+import rehypeHighlight from 'rehype-highlight'
+
+import 'katex/dist/katex.min.css' // Optional: For math rendering
 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
@@ -159,6 +167,12 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                     <div>{parse(contentHtml)}</div>
                 ) : (
                     <ReactMarkdown
+                        remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+                        rehypePlugins={[
+                            rehypeRaw,
+                            rehypeKatex,
+                            rehypeHighlight,
+                        ]}
                         components={{
                             code({ className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(

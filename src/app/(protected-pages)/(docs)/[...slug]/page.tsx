@@ -192,6 +192,44 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                                     </code>
                                 )
                             },
+                            table: ({ ...props }) => (
+                                <div className="overflow-x-auto my-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                                    <table
+                                        className="min-w-full !m-0 divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900"
+                                        {...props}
+                                    />
+                                </div>
+                            ),
+                            thead: ({ ...props }) => (
+                                <thead
+                                    className="bg-gray-50 dark:bg-gray-800"
+                                    {...props}
+                                />
+                            ),
+                            th: ({ ...props }) => (
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 dark:text-gray-400 uppercase tracking-wider border border-gray-200 dark:border-gray-700"
+                                    {...props}
+                                />
+                            ),
+                            tbody: ({ ...props }) => (
+                                <tbody
+                                    className="divide-y divide-gray-200 dark:divide-gray-700"
+                                    {...props}
+                                />
+                            ),
+                            tr: ({ ...props }) => (
+                                <tr
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 ease-in-out"
+                                    {...props}
+                                />
+                            ),
+                            td: ({ ...props }) => (
+                                <td
+                                    className="px-6 py-3 whitespace-normal text-sm text-gray-900 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+                                    {...props}
+                                />
+                            ),
                         }}
                     >
                         {contentHtml}

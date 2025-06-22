@@ -137,7 +137,7 @@ All handled by the **ZuzNet protocol and autonomous agents** — **no servers, n
 
 ## 📷 Interfaces
 
-![Interfaces](/home/vadim/Desktop/ZUZ-SUI/src/website/content/assets/home-interfaces.png "Interfaces")
+![Interfaces](https://i.ibb.co/7dh9wX5t/image.png "Interfaces")
 
 ---
 

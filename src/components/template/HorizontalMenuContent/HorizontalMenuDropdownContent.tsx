@@ -306,6 +306,7 @@ const DefaultLayout = ({
                             )}
                             {nav.type === NAV_ITEM_TYPE_COLLAPSE && (
                                 <Dropdown
+                                    activeKey={nav.key}
                                     renderTitle={
                                         <span className="flex items-center gap-2">
                                             <MenuIcon icon={nav.icon} />

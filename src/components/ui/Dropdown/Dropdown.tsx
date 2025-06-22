@@ -11,6 +11,7 @@ export interface DropdownProps extends DropdownMenuProps {
     ref?: Ref<DropdownRef>
 }
 
+
 const Dropdown = ({
     activeKey,
     ref,
@@ -22,13 +23,13 @@ const Dropdown = ({
         return (
             <DropdownContextProvider value={{ activeKey }}>
                 <FloatingTree>
-                    <DropdownMenu {...props} ref={ref} />
+                    <DropdownMenu activeKey={activeKey} {...props} ref={ref} />
                 </FloatingTree>
             </DropdownContextProvider>
         )
     }
 
-    return <DropdownMenu {...props} ref={ref} />
+    return <DropdownMenu activeKey={activeKey} {...props} ref={ref} />
 }
 
 export default Dropdown

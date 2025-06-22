@@ -10,7 +10,7 @@ const nextConfig = {
 
     outputFileTracingIncludes: {
         // include entire content folder in server bundle
-        '.': ['content/**/*'],
+          '.': ['content/**/*', 'public/configs/**/*'],
     },
 }
 

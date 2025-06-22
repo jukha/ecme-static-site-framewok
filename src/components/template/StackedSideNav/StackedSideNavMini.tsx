@@ -16,6 +16,7 @@ import Link from 'next/link'
 import type { NavigationTree } from '@/@types/navigation'
 import type { Direction, Mode } from '@/@types/theme'
 import type { CommonProps } from '@/@types/common'
+import { usePathname } from 'next/navigation'
 
 export type SelectedMenuItem = {
     key?: string
@@ -60,6 +61,8 @@ const StackedSideNavMini = (props: StackedSideNavMiniProps) => {
         navigationTree,
         routeKey,
     )
+
+    const pathname = usePathname()
 
     const handleMenuItemSelect = ({
         key,
@@ -138,6 +141,12 @@ const StackedSideNavMini = (props: StackedSideNavMiniProps) => {
                                                 menu: nav.subMenu,
                                                 translateKey: nav.translateKey,
                                             })
+                                        }
+                                        isActive={
+                                            activeKeys.includes(nav.key) ||
+                                            pathname.includes(
+                                                nav.key.split('.').join('/'),
+                                            )
                                         }
                                     >
                                         <div className="text-2xl">

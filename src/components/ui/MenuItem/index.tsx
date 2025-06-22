@@ -14,7 +14,7 @@ export interface MenuItemProps extends CommonProps {
     menuItemHeight?: string | number
     onSelect?: (eventKey: string, e: MouseEvent) => void
     ref?: Ref<HTMLElement>
-    icon: string
+    icon?: string
 }
 
 const MenuItem = (props: MenuItemProps) => {
@@ -66,7 +66,7 @@ const MenuItem = (props: MenuItemProps) => {
             {dotIndent ? (
                 <>
                     <div className="pl-3">
-                        <VerticalMenuIcon icon={icon} />
+                        <VerticalMenuIcon icon={icon || ""} />
                         {/* <PiDotOutlineFill
                             className={classNames(
                                 'text-3xl w-[24px]',

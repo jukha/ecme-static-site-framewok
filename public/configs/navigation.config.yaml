@@ -1,4 +1,4 @@
-- key: home     
+- key: home
   path: /home
   title: Home
   translateKey: nav.landing

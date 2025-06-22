@@ -82,7 +82,7 @@ export function loadNavigationConfig(): NavigationTree[] {
         throw new Error('Navigation YAML config root must be an array')
     }
 
-    console.log('🔴🔴🔴🔴🔴rawData', rawData)
+    // console.log('🔴🔴🔴🔴🔴rawData', rawData)
 
     return normalizeNavigation(rawData as RawNavigationItem[])
 }

@@ -40,7 +40,6 @@ const DefaultItem = ({
     const pathname = usePathname()
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
-            <div className='bg-purple-400'>
             <MenuCollapse
                 key={nav.key}
                 label={
@@ -57,7 +56,6 @@ const DefaultItem = ({
             >
                 {children}
             </MenuCollapse>
-            </div>
         </AuthorityCheck>
     )
 }

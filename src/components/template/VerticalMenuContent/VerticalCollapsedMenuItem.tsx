@@ -40,6 +40,7 @@ const DefaultItem = ({
     const pathname = usePathname()
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
+            <div className='bg-purple-400'>
             <MenuCollapse
                 key={nav.key}
                 label={
@@ -56,6 +57,7 @@ const DefaultItem = ({
             >
                 {children}
             </MenuCollapse>
+            </div>
         </AuthorityCheck>
     )
 }
@@ -90,6 +92,7 @@ const CollapsedItem = ({
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
             <Dropdown
                 trigger="hover"
+                activeKey={nav.key}
                 renderTitle={renderAsIcon ? menuItem : dropdownItem}
                 placement={direction === 'rtl' ? 'left-start' : 'right-start'}
             >

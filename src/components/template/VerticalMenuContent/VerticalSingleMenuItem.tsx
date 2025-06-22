@@ -1,13 +1,13 @@
-import Tooltip from '@/components/ui/Tooltip'
-import Menu from '@/components/ui/Menu'
-import AuthorityCheck from '@/components/shared/AuthorityCheck'
-import VerticalMenuIcon from './VerticalMenuIcon'
-import Link from 'next/link'
-import Dropdown from '@/components/ui/Dropdown'
 import type { CommonProps } from '@/@types/common'
-import type { Direction } from '@/@types/theme'
 import type { NavigationTree, TranslationFn } from '@/@types/navigation'
+import type { Direction } from '@/@types/theme'
+import AuthorityCheck from '@/components/shared/AuthorityCheck'
+import Dropdown from '@/components/ui/Dropdown'
+import Menu from '@/components/ui/Menu'
+import Tooltip from '@/components/ui/Tooltip'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import VerticalMenuIcon from './VerticalMenuIcon'
 
 const { MenuItem } = Menu
 
@@ -45,6 +45,7 @@ const CollapsedItem = ({
     t,
     currentKey,
 }: CollapsedItemProps) => {
+    const pathname = usePathname()
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
             {renderAsIcon ? (
@@ -55,7 +56,7 @@ const CollapsedItem = ({
                     {children}
                 </Tooltip>
             ) : (
-                <Dropdown.Item active={currentKey === nav.key}>
+                <Dropdown.Item active={nav.path === pathname}>
                     {nav.path ? (
                         <Link
                             className="h-full w-full flex items-center outline-hidden"

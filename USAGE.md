@@ -113,6 +113,59 @@ Each menu item is defined with these keys:
 
 ---
 
+### 🖼️ How to Add Icons to Menu Items
+
+You can display an icon next to any menu item by setting the `icon` property in your YAML entry.
+
+- The `icon` property should match the name of an icon exported from  
+  `src/configs/navigation-icon.config.tsx`.
+- Browse or open that file to see all available icon names.
+- Example icon names: `homeIcon`, `documentIcon`, `circleIcon`, etc.
+
+**How to use:**
+
+```yaml
+- key: aboutPage
+  path: /about
+  title: About
+  icon: homeIcon   # 👈 This will show the "home" icon
+  type: ITEM
+  authority: []
+  meta:
+      description:
+          label: About our company
+  subMenu: []
+```
+
+> ℹ️ **Tip:** If you want to add a new icon, add it to `src/configs/navigation-icon.config.tsx` and then reference its name in your YAML.
+
+---
+
+### 🎨 How to Change the Syntax Highlighting Theme
+
+You can easily change the color theme used for code blocks in Markdown pages.
+
+- The theme is set in the file  
+  `src/app/(protected-pages)/(docs)/[...slug]/page.tsx`
+- Look for this line near the top of the file:
+
+```tsx
+import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+```
+
+- To use a different theme, change `dracula` to any other available theme from [react-syntax-highlighter Prism themes](https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_STYLES_PRISM.MD).
+
+**Example:**  
+To use the `okaidia` theme, update the import like this:
+
+```tsx
+import { okaidia } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+```
+
+- Save the file and refresh your browser to see the new code highlighting style.
+
+---
+
 ### ✅ Example A: Add a Simple About us Page
 
 ```yaml

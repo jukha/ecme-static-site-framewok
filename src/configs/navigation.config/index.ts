@@ -1,5 +1,3 @@
-
-
 import fs from 'fs'
 import path from 'path'
 import YAML from 'yaml'
@@ -34,9 +32,11 @@ interface RawNavigationItem {
 
 const yamlFilePath = path.join(
     process.cwd(),
+    'public',
     'configs',
     'navigation.config.yaml',
 )
+// const yamlFilePath = './../../configs/navigation.config.yaml'
 
 function mapType(typeStr: string): NavigationTree['type'] {
     switch (typeStr) {
@@ -74,7 +74,7 @@ function normalizeNavigation(items: RawNavigationItem[]): NavigationTree[] {
     })
 }
 
-function loadNavigationConfig(): NavigationTree[] {
+export function loadNavigationConfig(): NavigationTree[] {
     const fileContents = fs.readFileSync(yamlFilePath, 'utf8')
     const rawData = YAML.parse(fileContents)
 
@@ -82,9 +82,11 @@ function loadNavigationConfig(): NavigationTree[] {
         throw new Error('Navigation YAML config root must be an array')
     }
 
+    // console.log('🔴🔴🔴🔴🔴rawData', rawData)
+
     return normalizeNavigation(rawData as RawNavigationItem[])
 }
 
-const navigationConfig = loadNavigationConfig()
+// const navigationConfig = loadNavigationConfig()
 
-export default navigationConfig
+// export default navigationConfig

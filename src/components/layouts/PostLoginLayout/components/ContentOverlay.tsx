@@ -38,7 +38,6 @@ const ContentOverlay = ({ children }: CommonProps) => {
                         className={classNames(
                             defaultClass,
                             'sm:px-0 px-4',
-                            header?.title ? '-mt-60' : '-mt-60 sm:-mt-40',
                         )}
                     >
                         <main className="h-full">
@@ -68,7 +67,7 @@ const ContentOverlay = ({ children }: CommonProps) => {
                                 {pageBackgroundType === 'plain' ? (
                                     <div
                                         className={classNames(
-                                            'bg-white dark:bg-gray-900 rounded-2xl',
+                                            'bg-red dark:bg-gray-900 rounded-2xl',
                                             pageContainerGutterClass,
                                         )}
                                     >

@@ -5,6 +5,7 @@ import AuthorityCheck from '@/components/shared/AuthorityCheck'
 import type { CommonProps } from '@/@types/common'
 import type { Direction } from '@/@types/theme'
 import type { NavigationTree, TranslationFn } from '@/@types/navigation'
+import { usePathname } from 'next/navigation'
 
 interface DefaultItemProps extends CommonProps {
     nav: NavigationTree
@@ -36,6 +37,7 @@ const DefaultItem = ({
     userAuthority,
     t,
 }: DefaultItemProps) => {
+    const pathname = usePathname()
     return (
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
             <MenuCollapse
@@ -50,6 +52,7 @@ const DefaultItem = ({
                 expanded={false}
                 dotIndent={dotIndent}
                 indent={indent}
+                active={pathname.includes(nav.key.split('.').join('/'))}
             >
                 {children}
             </MenuCollapse>
@@ -66,10 +69,11 @@ const CollapsedItem = ({
     userAuthority,
     parentKeys,
 }: CollapsedItemProps) => {
+    const pathname = usePathname()
     const menuItem = (
         <MenuItem
             key={nav.key}
-            isActive={parentKeys?.includes(nav.key)}
+            isActive={pathname?.includes(nav.key)}
             eventKey={nav.key}
             className="mb-2"
             icon={nav.icon}
@@ -86,6 +90,7 @@ const CollapsedItem = ({
         <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
             <Dropdown
                 trigger="hover"
+                activeKey={nav.key}
                 renderTitle={renderAsIcon ? menuItem : dropdownItem}
                 placement={direction === 'rtl' ? 'left-start' : 'right-start'}
             >

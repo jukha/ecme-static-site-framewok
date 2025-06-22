@@ -10,7 +10,7 @@ import {
     LAYOUT_CONTENT_OVERLAY,
     LAYOUT_FRAMELESS_SIDE,
     LAYOUT_STACKED_SIDE,
-    LAYOUT_TOP_BAR_CLASSIC
+    LAYOUT_TOP_BAR_CLASSIC,
 } from '@/constants/theme.constant'
 import useTheme from '@/utils/hooks/useTheme'
 import classNames from 'classnames'
@@ -31,18 +31,18 @@ const layouts = [
         svg: <StackedSideSvg height={'100%'} width={'100%'} />,
     },
     {
-        value: LAYOUT_TOP_BAR_CLASSIC,
-        label: 'Top bar',
-        src: '/img/thumbs/layouts/stackedSide.jpg',
-        srcDark: '/img/thumbs/layouts/stackedSide-dark.jpg',
-        svg: <TopBarClassicSvg height={'100%'} width={'100%'} />,
-    },
-    {
         value: LAYOUT_FRAMELESS_SIDE,
         label: 'Frameless',
         src: '/img/thumbs/layouts/simple.jpg',
         srcDark: '/img/thumbs/layouts/simple-dark.jpg',
         svg: <FrameLessSideSvg height={'100%'} width={'100%'} />,
+    },
+    {
+        value: LAYOUT_TOP_BAR_CLASSIC,
+        label: 'Top bar',
+        src: '/img/thumbs/layouts/stackedSide.jpg',
+        srcDark: '/img/thumbs/layouts/stackedSide-dark.jpg',
+        svg: <TopBarClassicSvg height={'100%'} width={'100%'} />,
     },
     {
         value: LAYOUT_CONTENT_OVERLAY,

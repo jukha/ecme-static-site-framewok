@@ -60,8 +60,8 @@ const StackedSideNav = ({
 
     const handleCollpase = () => {
         setSelectedMenu({})
-
-        setActiveKeys([])
+        const activeKey = pathname.split('/')[1] ?? ''
+        setActiveKeys([activeKey])
     }
 
     const handleSetActiveKey = (key: string[]) => {

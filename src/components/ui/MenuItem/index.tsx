@@ -2,6 +2,7 @@ import VerticalMenuIcon from '@/components/template/VerticalMenuContent/Vertical
 import classNames from 'classnames'
 import type { ElementType, Ref } from 'react'
 import type { CommonProps } from '../@types/common'
+import { usePathname } from 'next/navigation'
 
 export interface MenuItemProps extends CommonProps {
     asElement?: ElementType
@@ -13,7 +14,7 @@ export interface MenuItemProps extends CommonProps {
     menuItemHeight?: string | number
     onSelect?: (eventKey: string, e: MouseEvent) => void
     ref?: Ref<HTMLElement>
-    icon: string
+    icon?: string
 }
 
 const MenuItem = (props: MenuItemProps) => {
@@ -33,12 +34,15 @@ const MenuItem = (props: MenuItemProps) => {
         ...rest
     } = props
 
+    const currentPathKey = usePathname().split('/')[1]
+    const isCurrentPath = currentPathKey === eventKey
+
     const menuItemActiveClass = `menu-item-active`
     const menuItemHoverClass = `menu-item-hoverable`
     const disabledClass = 'menu-item-disabled'
     const menuItemClass = classNames(
         'menu-item',
-        isActive && menuItemActiveClass,
+        (isActive || isCurrentPath) && menuItemActiveClass,
         disabled && disabledClass,
         !disabled && menuItemHoverClass,
         dotIndent && 'items-center gap-2 ',
@@ -62,7 +66,7 @@ const MenuItem = (props: MenuItemProps) => {
             {dotIndent ? (
                 <>
                     <div className="pl-3">
-                        <VerticalMenuIcon icon={icon} />
+                        <VerticalMenuIcon icon={icon || ""} />
                         {/* <PiDotOutlineFill
                             className={classNames(
                                 'text-3xl w-[24px]',

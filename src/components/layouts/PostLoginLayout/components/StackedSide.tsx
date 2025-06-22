@@ -6,7 +6,6 @@ import MobileNav from '@/components/template/MobileNav'
 import Search from '@/components/template/Search'
 import LanguageSelector from '@/components/template/LanguageSelector'
 import Notification from '@/components/template/Notification'
-import UserProfileDropdown from '@/components//template/UserProfileDropdown'
 import SidePanel from '@/components//template/SidePanel'
 import LayoutBase from '@/components//template/LayoutBase'
 import { LAYOUT_STACKED_SIDE } from '@/constants/theme.constant'
@@ -34,7 +33,6 @@ const StackedSide = ({ children }: CommonProps) => {
                                 <LanguageSelector />
                                 <Notification />
                                 <SidePanel />
-                                <UserProfileDropdown hoverable={false} />
                             </>
                         }
                     />

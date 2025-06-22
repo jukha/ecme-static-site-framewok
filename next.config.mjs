@@ -7,6 +7,11 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+
+    outputFileTracingIncludes: {
+        // include entire content folder in server bundle
+          '.': ['content/**/*', 'public/configs/**/*'],
+    },
 }
 
 export default withNextIntl(nextConfig)

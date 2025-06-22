@@ -39,6 +39,7 @@ import type { DropdownToggleSharedProps } from './DropdownToggle'
 import type { DropdownSubItemSharedProps } from './DropdownSubItem'
 import type { Placement } from '@floating-ui/react'
 import type { HTMLProps, FocusEvent, MouseEvent, ReactNode, Ref } from 'react'
+import { usePathname } from 'next/navigation'
 
 export interface DropdownMenuProps
     extends CommonProps,
@@ -68,6 +69,7 @@ const DropdownMenu = (props: DropdownMenuProps & HTMLProps<HTMLElement>) => {
         menuClass,
         placement,
         trigger = 'click',
+        activeKey,
         onOpen,
         ref,
         ...rest
@@ -76,6 +78,10 @@ const DropdownMenu = (props: DropdownMenuProps & HTMLProps<HTMLElement>) => {
     const [isOpen, setIsOpen] = useState(false)
     const [hasFocusInside, setHasFocusInside] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+    const pathname = usePathname();
+    console.log('pathanme', pathname, 'activeKey', activeKey);
+    const isSubItemActive = activeKey ? pathname.split('/').join('.').includes(activeKey) : false
 
     const elementsRef = useRef<Array<HTMLElement | null>>([])
     const labelsRef = useRef<Array<string | null>>([])
@@ -275,7 +281,7 @@ const DropdownMenu = (props: DropdownMenuProps & HTMLProps<HTMLElement>) => {
                     className={classNames(toggleClassName, 'outline-hidden')}
                     {...toggleProps}
                 >
-                    <DropdownSubItem>
+                    <DropdownSubItem active={isSubItemActive}>
                         {renderTitle ? renderTitle : title}
                     </DropdownSubItem>
                 </li>

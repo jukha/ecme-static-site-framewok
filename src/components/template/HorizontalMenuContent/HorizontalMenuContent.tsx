@@ -7,6 +7,7 @@ import useMenuActive from '@/utils/hooks/useMenuActive'
 import { TbChevronDown } from 'react-icons/tb'
 import { Direction } from '@/@types/theme'
 import type { NavigationTree, TranslationFn } from '@/@types/navigation'
+import { usePathname } from 'next/navigation'
 
 type HorizontalMenuContentProps = {
     routeKey: string
@@ -32,6 +33,7 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
         translationSetup ? useTranslation() : translationPlaceholder
     ) as TranslationFn
     const { activedRoute } = useMenuActive(navigationTree, routeKey)
+    const pathname = usePathname();
 
     return (
         <div className="gap-1 hidden lg:flex">
@@ -50,6 +52,7 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
                                 <HorizontalMenuDropdownTrigger
                                     ref={ref}
                                     {...props}
+                                    active={pathname.includes(nav.key.split('.').join('/'))}
                                     asElement="button"
                                 >
                                     <div className="flex items-center gap-1">
@@ -78,7 +81,8 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
                             {...props}
                             path={nav.path}
                             isExternalLink={nav.isExternalLink}
-                            active={activedRoute?.key === nav.key}
+                            // active={activedRoute?.key === nav.key}
+                            active={pathname.includes(nav.key.split('.').join('/'))}
                             asElement="a"
                         >
                             <div className="flex items-center gap-1">

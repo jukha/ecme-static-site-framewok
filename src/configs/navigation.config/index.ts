@@ -56,8 +56,8 @@ function normalizeNavigation(items: RawNavigationItem[]): NavigationTree[] {
     return items.map((item: RawNavigationItem) => {
         // Construct the NavigationTree object
         const normalizedItem: NavigationTree = {
-            key: item.key,
-            path: item.path,
+            key: item.key.toLowerCase(),
+            path: item.path.toLowerCase(),
             title: item.title,
             translateKey: item.translateKey,
             icon: item.icon,

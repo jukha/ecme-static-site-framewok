@@ -3,22 +3,21 @@
 // and raw HTML (.html) files located in the project's root 'content/' directory.
 // It uses Next.js App Router features for static site generation (SSG).
 
-import fs from 'fs' // Node.js File System module for reading files (server-side only)
-import path from 'path' // Node.js Path module for handling file paths (server-side only)
-import matter from 'gray-matter' // Library to parse YAML front matter from Markdown files
+import fs from 'fs'; // Node.js File System module for reading files (server-side only)
+import matter from 'gray-matter'; // Library to parse YAML front matter from Markdown files
+import parse from 'html-react-parser'; // Library to safely parse and render raw HTML strings in React
+import Head from 'next/head'
+import path from 'path'; // Node.js Path module for handling file paths (server-side only)
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
-import Head from 'next/head'
-import remarkGfm from 'remark-gfm'
-import remarkBreaks from 'remark-breaks'
-import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import rehypeRaw from 'rehype-raw'
-import rehypeHighlight from 'rehype-highlight'
+import remarkBreaks from 'remark-breaks'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
 
-import 'katex/dist/katex.min.css' // Optional: For math rendering
+import 'katex/dist/katex.min.css'; // Optional: For math rendering
 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
@@ -171,7 +170,6 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                         rehypePlugins={[
                             rehypeRaw,
                             rehypeKatex,
-                            rehypeHighlight,
                         ]}
                         components={{
                             code({ className, children, ...props }) {

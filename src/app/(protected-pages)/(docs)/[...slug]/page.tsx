@@ -3,11 +3,11 @@
 // and raw HTML (.html) files located in the project's root 'content/' directory.
 // It uses Next.js App Router features for static site generation (SSG).
 
-import fs from 'fs'; // Node.js File System module for reading files (server-side only)
-import matter from 'gray-matter'; // Library to parse YAML front matter from Markdown files
-import parse from 'html-react-parser'; // Library to safely parse and render raw HTML strings in React
+import fs from 'fs' // Node.js File System module for reading files (server-side only)
+import matter from 'gray-matter' // Library to parse YAML front matter from Markdown files
+import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
 import Head from 'next/head'
-import path from 'path'; // Node.js Path module for handling file paths (server-side only)
+import path from 'path' // Node.js Path module for handling file paths (server-side only)
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
@@ -17,7 +17,8 @@ import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 
-import 'katex/dist/katex.min.css'; // Optional: For math rendering
+import 'katex/dist/katex.min.css' // Optional: For math rendering
+import NotFound from '@/app/not-found'
 
 // --- Type Definitions ---
 // Defines the structure for the 'params' object passed to page components and data fetching functions.
@@ -129,15 +130,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         // For statically generated pages, generateStaticParams should prevent reaching here
         // for non-existent slugs. This acts as a fallback for dynamic scenarios or unexpected issues.
         else {
-            return (
-                <div className="prose dark:prose-invert max-w-none mx-auto p-8 text-center">
-                    <h1>Content Not Found</h1>
-                    <p>
-                        The page for &quot;{slug}&quot; could not be found.
-                        Please check the URL or if the content file exists.
-                    </p>
-                </div>
-            )
+            return <NotFound />
         }
     } catch (error) {
         console.error(`Error processing content for slug: ${slug}`, error)
@@ -167,10 +160,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                 ) : (
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-                        rehypePlugins={[
-                            rehypeRaw,
-                            rehypeKatex,
-                        ]}
+                        rehypePlugins={[rehypeRaw, rehypeKatex]}
                         components={{
                             code({ className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(
@@ -185,7 +175,10 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
                                         {String(children).replace(/\n$/, '')}
                                     </SyntaxHighlighter>
                                 ) : (
-                                    <code className={className} {...props}>
+                                    <code
+                                        className={className}
+                                        {...props}
+                                    >
                                         {children}
                                     </code>
                                 )

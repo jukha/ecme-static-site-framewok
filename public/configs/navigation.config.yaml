@@ -11,6 +11,19 @@
       label: Landing Page
   subMenu: []
 
+- key: test
+  path: /test
+  title: Test
+  translateKey: nav.test
+  icon: homeicon
+  type: ITEM
+  authority: []
+  meta:
+    description:
+      translateKey: nav.chatDesc  
+      label: Test Page
+  subMenu: [] 
+
 - key: vaults
   path: ""
   title: Vaults

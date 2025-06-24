@@ -1,276 +1,147 @@
 // app/docs/[slug]/page.tsx
-// This file serves as the dynamic page component for rendering both Markdown (.md)
-// and raw HTML (.html) files located in the project's root 'content/' directory.
-// It uses Next.js App Router features for static site generation (SSG).
+import fs from 'fs';
+import matter from 'gray-matter';
+import path from 'path';
+import { notFound } from 'next/navigation';
+import * as cheerio from 'cheerio'; // Used only on the server for style tag check
 
-import fs from 'fs' // Node.js File System module for reading files (server-side only)
-import matter from 'gray-matter' // Library to parse YAML front matter from Markdown files
-import parse from 'html-react-parser' // Library to safely parse and render raw HTML strings in React
-import Head from 'next/head'
-import path from 'path' // Node.js Path module for handling file paths (server-side only)
-import ReactMarkdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import rehypeKatex from 'rehype-katex'
-import rehypeRaw from 'rehype-raw'
-import remarkBreaks from 'remark-breaks'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-
-import 'katex/dist/katex.min.css' // Optional: For math rendering
-import NotFound from '@/app/not-found'
+// Import the new Client Component
+import DocContentClient from './components/DocContentClient'; // Adjust path if your components folder is elsewhere
 
 // --- Type Definitions ---
-// Defines the structure for the 'params' object passed to page components and data fetching functions.
-interface Params {
-    slug: string[] // The dynamic part of the URL (e.g., 'about' for /docs/about)
-}
+interface Params { slug: string[] }
+interface StaticDocPageProps { params: Promise<Params> }
+interface FrontMatter { title?: string; [key: string]: unknown; }
 
-// Defines the props structure for the StaticDocPage component.
-interface StaticDocPageProps {
-    params: Promise<Params>
-}
-
-// Defines the expected structure of the front matter in Markdown files.
-interface FrontMatter {
-    title?: string // Optional title for the page
-    date?: string // Optional date
-    [key: string]: unknown // Allows for additional, arbitrary properties in front matter
-}
-
-const readContentDir = (contentDir: string) => {
-    let filenames: string[] = []
-
+/**
+ * Recursively reads filenames from a content directory.
+ * @param contentDir The directory to read.
+ * @returns An array of full file paths.
+ */
+const readContentDir = (contentDir: string): string[] => {
+    let filenames: string[] = [];
     try {
-        // Read all filenames from the 'content' directory.
-        const entries = fs.readdirSync(contentDir, { withFileTypes: true })
-
+        const entries = fs.readdirSync(contentDir, { withFileTypes: true });
         for (const entry of entries) {
             if (entry.isDirectory()) {
-                // Recursively read subdirectories
-                const nestedFilenames = readContentDir(
-                    path.join(contentDir, entry.name),
-                )
-                filenames = filenames.concat(nestedFilenames)
+                const nestedFilenames = readContentDir(path.join(contentDir, entry.name));
+                filenames = filenames.concat(nestedFilenames);
             } else {
-                // Add filenames to the list
-                filenames.push(path.join(contentDir, entry.name))
+                filenames.push(path.join(contentDir, entry.name));
             }
         }
-
-        return filenames
+        return filenames;
     } catch (error) {
-        console.error('Error reading content directory:', error)
-        return []
+        console.error('Error reading content directory:', error);
+        return [];
     }
-}
+};
 
-// --- generateStaticParams Function ---
-// This Next.js App Router function is crucial for Static Site Generation (SSG).
-// It tells Next.js which dynamic paths ([slug]) should be pre-rendered into static HTML
-// at build time. This improves performance as pages are served directly from a CDN.
+/**
+ * Generates static paths for all Markdown and HTML documents.
+ * This is a Next.js built-in function for Static Site Generation (SSG).
+ * @returns An array of parameters for each static path.
+ */
 export async function generateStaticParams(): Promise<Params[]> {
-    // Construct the absolute path to the 'content' directory at the project root.
-    const contentDirectory = path.join(process.cwd(), 'content')
+    const contentDirectory = path.join(process.cwd(), 'content');
+    const filenames: string[] = readContentDir(contentDirectory);
 
-    const filenames: string[] = readContentDir(contentDirectory)
-
-    // Filter for files ending with .md or .html and map them to 'slug' parameters.
     const params: Params[] = filenames
         .filter((name) => name.endsWith('.md') || name.endsWith('.html'))
         .map((filename) => {
-            // Minimal Change 2: Calculate relative path before splitting
-            const relativePath = path.relative(contentDirectory, filename)
+            const relativePath = path.relative(contentDirectory, filename);
+            // Split by path.sep ( OS-specific separator) to handle nested slugs
             return {
-                // Minimal Change 3: Use path.sep for cross-platform compatibility
                 slug: relativePath.replace(/\.(md|html)$/, '').split(path.sep),
-            }
-        })
-
-    return params
+            };
+        });
+    return params;
 }
 
-// --- Main Page Component (React Server Component) ---
-// This is the default export for the page, responsible for rendering the content.
-// It's an 'async' component because it fetches data directly during server rendering/build.
+/**
+ * Main Page Component (React Server Component)
+ * Fetches content on the server and passes it to a client component for rendering.
+ * @param params The slug array from the URL.
+ */
 export default async function StaticDocPage({ params }: StaticDocPageProps) {
-    const { slug } = await params
+    const { slug } = await params;
 
-    // Construct full paths for both potential Markdown and HTML files.
-    const mdFilePath = path.join(
-        process.cwd(),
-        'content',
-        `${slug.join('/')}.md`,
-    )
-    const htmlFilePath = path.join(
-        process.cwd(),
-        'content',
-        `${slug.join('/')}.html`,
-    )
+    const mdFilePath = path.join(process.cwd(), 'content', `${slug.join('/')}.md`);
+    const htmlFilePath = path.join(process.cwd(), 'content', `${slug.join('/')}.html`);
 
-    let fileContents: string = '' // Stores raw content read from file
-    let frontMatter: FrontMatter = {} // Stores parsed front matter for Markdown
-    let contentHtml: string = '' // Stores the final HTML string to be rendered
-    let isHtml: boolean = false // Flag to determine if original file was HTML
+    let rawContent: string = ''; // This will hold the raw Markdown or HTML string
+    let frontMatter: FrontMatter = {};
+    let isHtmlFile: boolean = false;
+    let disableSiteCSS: boolean = false; // Flag to control site-wide CSS based on internal styles
 
     try {
-        // Attempt to read and process the Markdown file first.
         if (fs.existsSync(mdFilePath)) {
-            fileContents = fs.readFileSync(mdFilePath, 'utf8')
-            const { data: fm, content } = matter(fileContents)
-            frontMatter = fm as FrontMatter // Type assertion for type safety
-            contentHtml = content // Store the raw markdown content
-            isHtml = false
+            const fileContents = fs.readFileSync(mdFilePath, 'utf8');
+            const { data: fm, content } = matter(fileContents);
+            frontMatter = fm as FrontMatter;
+            rawContent = content; // Store the raw Markdown content
+            isHtmlFile = false;
         } else if (fs.existsSync(htmlFilePath)) {
-            fileContents = fs.readFileSync(htmlFilePath, 'utf8')
-            contentHtml = fileContents
-            isHtml = true
-        }
-        // If neither file exists for the given slug, display a 'Not Found' message.
-        // For statically generated pages, generateStaticParams should prevent reaching here
-        // for non-existent slugs. This acts as a fallback for dynamic scenarios or unexpected issues.
-        else {
-            return <NotFound />
-        }
-    } catch (error) {
-        console.error(`Error processing content for slug: ${slug}`, error)
-        return (
-            <div className="prose dark:prose-invert max-w-none mx-auto p-8 text-center text-red-500">
-                <h1>Error Loading Content</h1>
-                <p>
-                    An error occurred while trying to load the page for &quot;
-                    {slug}&quot;.
-                </p>
-            </div>
-        )
-    }
+            rawContent = fs.readFileSync(htmlFilePath, 'utf8'); // Store the raw HTML content
+            isHtmlFile = true;
 
-    // set page title
+            // Check if the HTML file contains any <style> tags on the server
+            // This is done server-side to determine the disableSiteCSS flag early
+            const temp$ = cheerio.load(rawContent);
+            if (temp$('style').length > 0) {
+                disableSiteCSS = true;
+            }
+        } else {
+            // If neither markdown nor HTML file is found, trigger Next.js notFound
+            notFound();
+        }
+
+    } catch (error) {
+        console.error(`Error processing content for slug: ${slug}`, error);
+        // If an error occurs during processing, also trigger Next.js notFound
+        notFound();
+    }
 
     return (
         <div className="max-w-5xl">
-            <Head>
-                <title>{frontMatter.title}</title>
-            </Head>
-            <div className="prose dark:prose-invert max-w-none mx-auto p-8">
-                {frontMatter?.title && <h1>{frontMatter.title}</h1>}
-
-                {isHtml ? (
-                    <div>{parse(contentHtml)}</div>
-                ) : (
-                    <ReactMarkdown
-                        remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-                        rehypePlugins={[rehypeRaw, rehypeKatex]}
-                        components={{
-                            code({ className, children, ...props }) {
-                                const match = /language-(\w+)/.exec(
-                                    className || '',
-                                )
-                                return match ? (
-                                    <SyntaxHighlighter
-                                        language={match[1]}
-                                        PreTag="div"
-                                        style={dracula}
-                                    >
-                                        {String(children).replace(/\n$/, '')}
-                                    </SyntaxHighlighter>
-                                ) : (
-                                    <code
-                                        className={className}
-                                        {...props}
-                                    >
-                                        {children}
-                                    </code>
-                                )
-                            },
-                            table: ({ ...props }) => (
-                                <div className="overflow-x-auto my-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                                    <table
-                                        className="min-w-full !m-0 divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900"
-                                        {...props}
-                                    />
-                                </div>
-                            ),
-                            thead: ({ ...props }) => (
-                                <thead
-                                    className="bg-gray-50 dark:bg-gray-800"
-                                    {...props}
-                                />
-                            ),
-                            th: ({ ...props }) => (
-                                <th
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 dark:text-gray-400 uppercase tracking-wider border border-gray-200 dark:border-gray-700"
-                                    {...props}
-                                />
-                            ),
-                            tbody: ({ ...props }) => (
-                                <tbody
-                                    className="divide-y divide-gray-200 dark:divide-gray-700"
-                                    {...props}
-                                />
-                            ),
-                            tr: ({ ...props }) => (
-                                <tr
-                                    className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 ease-in-out"
-                                    {...props}
-                                />
-                            ),
-                            td: ({ ...props }) => (
-                                <td
-                                    className="px-6 py-3 whitespace-normal text-sm text-gray-900 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
-                                    {...props}
-                                />
-                            ),
-                        }}
-                    >
-                        {contentHtml}
-                    </ReactMarkdown>
-                )}
-            </div>
+            {/* Pass rawContent and relevant flags to the Client Component */}
+            <DocContentClient
+                rawContent={rawContent}
+                isHtmlFile={isHtmlFile}
+                frontMatterTitle={frontMatter?.title}
+                disableSiteCSS={disableSiteCSS}
+            />
         </div>
-    )
+    );
 }
 
-// --- generateMetadata Function (Optional but Recommended for SEO) ---
-// This Next.js App Router function allows you to dynamically set page metadata (like title)
-// based on the content of the page, which is crucial for SEO and browser tabs.
+/**
+ * Generates metadata for the page, fetching the title from front matter or slug.
+ * This is a Next.js built-in function for Metadata API.
+ * @param params The slug array from the URL.
+ */
 export async function generateMetadata({ params }: StaticDocPageProps) {
-    const { slug } = await params
+    const { slug } = await params;
 
-    const mdFilePath = path.join(
-        process.cwd(),
-        'content',
-        `${slug.join('/')}.md`,
-    )
+    const mdFilePath = path.join(process.cwd(), 'content', `${slug.join('/')}.md`);
+    const htmlFilePath = path.join(process.cwd(), 'content', `${slug.join('/')}.html`);
 
-    const htmlFilePath = path.join(
-        process.cwd(),
-        'content',
-        `${slug.join('/')}.html`,
-    )
-
-    let pageTitle = 'Documentation' // Default title if no specific title is found
+    let pageTitle = 'Documentation';
 
     try {
         if (fs.existsSync(mdFilePath)) {
-            const fileContents = fs.readFileSync(mdFilePath, 'utf8')
-            const { data: frontMatter } = matter(fileContents)
-            pageTitle =
-                (frontMatter as FrontMatter).title || slug[slug.length - 1]
+            const fileContents = fs.readFileSync(mdFilePath, 'utf8');
+            const { data: frontMatter } = matter(fileContents);
+            pageTitle = (frontMatter as FrontMatter).title || slug[slug.length - 1];
         } else if (fs.existsSync(htmlFilePath)) {
-            // For HTML files, extracting the title programmatically can be more complex.
-            // You could potentially parse the HTML string to find the <title> tag,
-            // but for simplicity, we'll use a generic title or the slug here.
-            pageTitle = slug[slug.length - 1]
+            pageTitle = slug[slug.length - 1];
         }
     } catch (error) {
-        console.error(`Error generating metadata for slug: ${slug}`, error)
-        pageTitle = `Error Loading Doc` // Fallback title on error
+        console.error(`Error generating metadata for slug: ${slug}`, error);
+        pageTitle = `Error Loading Doc`;
     }
 
     return {
         title: pageTitle.replaceAll('-', ' '),
-        // You can add other meta tags here, e.g., description, keywords, etc.
-        // description: frontMatter.description || `Content for ${slug}`,
-    }
+    };
 }

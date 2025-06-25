@@ -2,7 +2,7 @@
   path: /home
   title: Home
   translateKey: nav.home
-  icon: homeicon
+  icon: home-icon
   type: ITEM
   authority: []
   meta:
@@ -15,7 +15,7 @@
   path: /test
   title: Test
   translateKey: nav.test
-  icon: homeicon
+  icon: tests-icon
   type: ITEM
   authority: []
   meta:
@@ -39,7 +39,7 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: createicon
+      icon: create-icon
 
     - key: vaults.status
       path: /vaults/status
@@ -48,13 +48,13 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: statusicon
+      icon: status-icon
 
 - key: monitors
   path: ""
   title: Monitors
   translateKey: nav.monitors
-  icon: monitorsicon
+  icon: monitors-icon
   type: COLLAPSE
   authority: []
   subMenu:
@@ -65,7 +65,7 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: networkicon
+      icon: network-icon
 
     - key: monitors.stats
       path: /monitors/stats
@@ -74,7 +74,7 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: statisticsicon
+      icon: statistics-icon
 
 - key: validators
   path: ""
@@ -91,7 +91,7 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: dashboardicon
+      icon: dashboard-icon
 
     - key: validators.voting
       path: /validators/voting
@@ -100,7 +100,7 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: votingicon
+      icon: voting-icon
 
     - key: validators.tests
       path: /validators/tests
@@ -109,13 +109,13 @@
       type: ITEM
       authority: []
       subMenu: []
-      icon: testsicon
+      icon: tests-icon
 
 - key: dao
   path: ""
   title: DAO
   translateKey: nav.dao
-  icon: daoicon
+  icon: dao-icon
   type: COLLAPSE
   authority: []
   meta:
@@ -127,7 +127,7 @@
       path: /dao/structure
       title: Structure
       translateKey: nav.dao.structure
-      icon: structureicon
+      icon: structure-icon
       type: ITEM
       authority: []
       meta:
@@ -140,7 +140,7 @@
       path: /dao/governance
       title: Governance
       translateKey: nav.dao.governance
-      icon: governanceicon
+      icon: governance-icon
       type: ITEM
       authority: []
       meta:
@@ -165,7 +165,7 @@
       path: /legal-and-compliance/legal-doc
       title: Legal Doc
       translateKey: nav.legal.legal
-      icon: legalicon
+      icon: legal-icon
       type: ITEM
       authority: []
       meta:
@@ -190,7 +190,7 @@
       path: /documentation/installation
       title: Installation
       translateKey: nav.documentation.installation
-      icon: installationicon
+      icon: installation-icon
       type: ITEM
       authority: []
       meta:
@@ -215,7 +215,7 @@
       path: /documentation/protocol
       title: Protocol
       translateKey: nav.documentation.protocol
-      icon: protocolicon
+      icon: protocol-icon
       type: ITEM
       authority: []
       meta:
@@ -228,7 +228,7 @@
       path: /documentation/privacy
       title: Privacy
       translateKey: nav.documentation.privacy
-      icon: privacyicon
+      icon: privacy-icon
       type: ITEM
       authority: []
       meta:
@@ -241,7 +241,7 @@
       path: /documentation/api
       title: API
       translateKey: nav.documentation.api
-      icon: apiicon
+      icon: api-icon
       type: ITEM
       authority: []
       meta:
@@ -254,7 +254,7 @@
       path: /documentation/sdk
       title: SDK
       translateKey: nav.documentation.sdk
-      icon: sdkicon
+      icon: sdk-icon
       type: ITEM
       authority: []
       meta:
@@ -267,7 +267,7 @@
   path: ""
   title: Help Center
   translateKey: nav.helpCenter
-  icon: helpCenter
+  icon: help-center-icon
   type: COLLAPSE
   authority: []
   meta:
@@ -279,7 +279,7 @@
       path: /help-center/tutorial
       title: Tutorial
       translateKey: nav.helpCenter.tutorial
-      icon: tutorialicon
+      icon: tutorial-icon
       type: ITEM
       authority: []
       meta:
@@ -292,7 +292,7 @@
       path: /help-center/user-guide
       title: User Guide
       translateKey: nav.helpCenter.userGuide
-      icon: userguideicon
+      icon: userguide-icon
       type: ITEM
       authority: []
       meta:
@@ -305,7 +305,7 @@
       path: /help-center/faqs
       title: FAQ
       translateKey: nav.helpCenter.FAQ
-      icon: faqicon
+      icon: faq-icon
       type: ITEM
       authority: []
       meta:
@@ -318,7 +318,7 @@
       path: /help-center/examples
       title: Examples
       translateKey: nav.helpCenter.examples
-      icon: examplesicon
+      icon: examples-icon
       type: ITEM
       authority: []
       meta:
@@ -331,7 +331,7 @@
       path: /help-center/use-cases
       title: Use Cases
       translateKey: nav.helpCenter.useCases
-      icon: usecasesicon
+      icon: usecases-icon
       type: ITEM
       authority: []
       meta:
@@ -344,7 +344,7 @@
       path: /help-center/zuz-dsl
       title: Zuz Dsl
       translateKey: nav.helpCenter.zuz-dsl
-      icon: zuzdslicon
+      icon: zuzdsl-icon
       type: ITEM
       authority: []
       meta:
@@ -369,7 +369,7 @@
       path: /about/about-doc
       title: About Doc
       translateKey: nav.about.about
-      icon: abouticon
+      icon: about-icon
       type: ITEM
       authority: []
       meta:

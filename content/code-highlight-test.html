@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Highlighting Test Page</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Dummy Code Highlighting Test</h1>
+        <p>This page is designed to test how your application processes raw HTML files and applies `highlight.js` for syntax highlighting, relying solely on external CSS for styling.</p>
+
+        <h2>Python Example</h2>
+        <p>Here's a simple Python function to calculate factorial, wrapped in `pre` and `code` tags with a language class:</p>
+        <pre><code class="language-python">
+def factorial(n):
+    """
+    This function calculates the factorial of a non-negative integer.
+    """
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+# Test the function
+num = 5
+print(f"The factorial of {num} is {factorial(num)}")
+        </code></pre>
+
+        <h2>JavaScript Example (Auto-detection)</h2>
+        <p>This JavaScript snippet demonstrates an asynchronous operation. Notice there's no `language-` class, so `highlight.js` should auto-detect:</p>
+        <pre><code>
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Could not fetch data:", error);
+        return null;
+    }
+}
+
+fetchData('https://api.example.com/data')
+    .then(data => console.log(data))
+    .catch(err => console.error(err));
+        </code></pre>
+
+        <h2>HTML Structure Example</h2>
+        <p>Below is a basic HTML structure that should also be highlighted:</p>
+        <pre><code class="language-html">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+        </code></pre>
+
+        <h2>Plain Text Example (No Highlighting)</h2>
+        <p>This `pre` tag contains just plain text, not code. It shouldn't be highlighted, but maintain its formatting:</p>
+        <pre>
+This is just some preformatted plain text.
+It might contain line breaks,
+but it's not a code snippet.
+        </pre>
+
+        <p>End of test page.</p>
+    </div>
+</body>
+</html>

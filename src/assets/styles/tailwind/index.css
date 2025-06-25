@@ -117,6 +117,6 @@
 	}
 
 	code {
-		@apply bg-[#f0f0f0] rounded-sm p-[.2em] after:!content-['\00a0'] before:!content-['\00a0'] after:tracking-[-.2em] before:tracking-[-.2em]
+		@apply bg-[#f0f0f0] dark:bg-[#1a1a1a] dark:text-white rounded-sm p-[.2em] after:!content-['\00a0'] before:!content-['\00a0'] after:tracking-[-.2em] before:tracking-[-.2em]
 	}
 }

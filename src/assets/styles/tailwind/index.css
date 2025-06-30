@@ -117,7 +117,7 @@
 		@apply text-gray-900 dark:text-gray-100;
 	}
 
-	code {
+	code:not(.hljs) {
 		@apply bg-[#f9f2f4] dark:bg-[#1a1a1a] !text-[#c7254e] dark:!text-white rounded-sm p-[.2em] after:!content-['\00a0'] before:!content-['\00a0'] after:tracking-[-.2em] before:tracking-[-.2em]
 	}
 

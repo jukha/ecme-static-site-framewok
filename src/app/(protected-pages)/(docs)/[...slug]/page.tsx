@@ -2,15 +2,17 @@ import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import { notFound } from 'next/navigation';
-import * as cheerio from 'cheerio';
+import * as cheerio from 'cheerio'; // Make sure cheerio is imported
 import markdownit from 'markdown-it';
-import hljs from 'highlight.js'; 
+import hljs from 'highlight.js';
 
 // Plugins
 import { abbr } from "@mdit/plugin-abbr";
 import {footnote} from '@mdit/plugin-footnote';
 import {sub} from '@mdit/plugin-sub';
 import {sup} from '@mdit/plugin-sup';
+
+import 'highlight.js/styles/dracula.css';
 
 import DocContentClient from './components/DocContentClient';
 
@@ -89,7 +91,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
   let rawContent = '';
   let frontMatter: FrontMatter = {};
   let isHtmlFile = false;
-  let disableSiteCSS = false;
+  let useShadowDOM = false; // NEW: Flag to control Shadow DOM usage
 
   const ext = path.extname(foundFilePath).toLowerCase();
   try {
@@ -120,12 +122,21 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
 
       rawContent = md.render(content);
       isHtmlFile = false;
+      useShadowDOM = false; // Markdown files never use Shadow DOM
     } else if (ext === '.html') {
-      rawContent = fs.readFileSync(foundFilePath, 'utf8');
+      const fileContents = fs.readFileSync(foundFilePath, 'utf8');
+      rawContent = fileContents; // Keep original raw content for client-side processing
+
       isHtmlFile = true;
 
-      const $ = cheerio.load(rawContent);
-      if ($('style').length > 0) disableSiteCSS = true;
+      // NEW: Check for internal <style> tags or external <link rel="stylesheet">
+      const $ = cheerio.load(fileContents);
+      if ($('style').length > 0 || $('link[rel="stylesheet"]').length > 0) {
+        useShadowDOM = true;
+      } else {
+        useShadowDOM = false;
+      }
+
     } else {
       return notFound();
     }
@@ -140,7 +151,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         rawContent={rawContent}
         isHtmlFile={isHtmlFile}
         frontMatterTitle={frontMatter?.title}
-        disableSiteCSS={disableSiteCSS}
+        useShadowDOM={useShadowDOM} // Pass the new flag
       />
     </div>
   );

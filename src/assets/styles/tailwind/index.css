@@ -109,6 +109,7 @@
 	hr {
 		@apply border-gray-200 dark:border-gray-600;
 	}
+	
 }
 
 @layer components {
@@ -117,6 +118,25 @@
 	}
 
 	code {
-		@apply bg-[#f0f0f0] dark:bg-[#1a1a1a] dark:text-white rounded-sm p-[.2em] after:!content-['\00a0'] before:!content-['\00a0'] after:tracking-[-.2em] before:tracking-[-.2em]
+		@apply bg-[#f9f2f4] dark:bg-[#1a1a1a] !text-[#c7254e] dark:!text-white rounded-sm p-[.2em] after:!content-['\00a0'] before:!content-['\00a0'] after:tracking-[-.2em] before:tracking-[-.2em]
 	}
+
+	.prose table {
+        border-collapse: collapse !important; /* Enforce collapse */
+        width: 100% !important; /* Enforce full width */
+        @apply !border !border-gray-300 dark:!border-gray-600; /* Enforce outer border */
+    }
+
+    .prose th,
+    .prose td {
+        @apply !px-4 !py-2; /* Enforce padding */
+        @apply !border !border-gray-300 dark:!border-gray-600; /* Enforce cell borders */
+    }
+
+    .prose thead th {
+        @apply !bg-gray-100 dark:!bg-gray-800; /* Enforce background */
+        text-align: left !important; /* Enforce text alignment */
+        font-weight: bold !important; /* Enforce bold font weight */
+    }
+
 }

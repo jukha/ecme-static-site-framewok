@@ -9,7 +9,6 @@ import type { ReactNode } from 'react'
 import '@/assets/styles/app.css'
 import { loadNavigationConfig } from '@/configs/navigation.config'
 
-
 export const metadata = {
     ...pageMetaConfig,
 }
@@ -24,7 +23,6 @@ export default async function RootLayout({
 
     // const navigationTree = (await params).nav
     const navigationTree = loadNavigationConfig()
-    
 
     const theme = await getTheme()
 

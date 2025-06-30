@@ -11,6 +11,19 @@
       label: Landing Page
   subMenu: []
 
+- key: plugins-test
+  path: /plugins-test
+  title: Plugins Test
+  translateKey: nav.plugins-test
+  icon: home-icon
+  type: ITEM
+  authority: []
+  meta:
+    description:
+      translateKey: nav.chatDesc  
+      label: Landing Page
+  subMenu: []
+
 - key: code-highlight-test
   path: /code-highlight-test
   title: Code Highlight Test

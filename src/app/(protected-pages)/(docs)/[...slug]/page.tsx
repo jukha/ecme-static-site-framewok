@@ -1,20 +1,23 @@
+// app/docs/[...slug]/page.tsx
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 import { notFound } from 'next/navigation';
-import * as cheerio from 'cheerio'; // Make sure cheerio is imported
+import * as cheerio from 'cheerio';
 import markdownit from 'markdown-it';
 import hljs from 'highlight.js';
 
-// Plugins
+// Markdown-it Plugins
 import { abbr } from "@mdit/plugin-abbr";
-import {footnote} from '@mdit/plugin-footnote';
-import {sub} from '@mdit/plugin-sub';
-import {sup} from '@mdit/plugin-sup';
+import { footnote } from '@mdit/plugin-footnote';
+import { sub } from '@mdit/plugin-sub';
+import { sup } from '@mdit/plugin-sup';
 
-import 'highlight.js/styles/dracula.css';
+// Make sure to remove the static import for a specific theme:
+// import 'highlight.js/styles/dracula.css'; // <--- REMOVE THIS LINE IF IT'S STILL HERE
 
 import DocContentClient from './components/DocContentClient';
+import { getHighlightThemes } from '@/utils/getHighlightThemes';
 
 interface Params { slug: string[] }
 interface StaticDocPageProps { params: Promise<Params> }
@@ -91,7 +94,7 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
   let rawContent = '';
   let frontMatter: FrontMatter = {};
   let isHtmlFile = false;
-  let useShadowDOM = false; // NEW: Flag to control Shadow DOM usage
+  let useShadowDOM = false;
 
   const ext = path.extname(foundFilePath).toLowerCase();
   try {
@@ -105,6 +108,8 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
         linkify: true,
         typographer: true,
         highlight: (str: string, lang: string): string => {
+          // This highlight function now ONLY applies classes.
+          // The actual theme CSS is loaded dynamically on the client by HighlightThemeSwitcher.
           if (lang && hljs.getLanguage(lang)) {
             try {
               return `<pre><code class="hljs language-${lang}">` +
@@ -122,14 +127,14 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
 
       rawContent = md.render(content);
       isHtmlFile = false;
-      useShadowDOM = false; // Markdown files never use Shadow DOM
+      useShadowDOM = false;
     } else if (ext === '.html') {
       const fileContents = fs.readFileSync(foundFilePath, 'utf8');
-      rawContent = fileContents; // Keep original raw content for client-side processing
+      rawContent = fileContents;
 
       isHtmlFile = true;
 
-      // NEW: Check for internal <style> tags or external <link rel="stylesheet">
+      // Check for internal <style> tags or external <link rel="stylesheet"> to decide Shadow DOM
       const $ = cheerio.load(fileContents);
       if ($('style').length > 0 || $('link[rel="stylesheet"]').length > 0) {
         useShadowDOM = true;
@@ -145,13 +150,17 @@ export default async function StaticDocPage({ params }: StaticDocPageProps) {
     return notFound();
   }
 
+  // Get available themes on the server-side
+  const availableThemes = getHighlightThemes();
+
   return (
     <div className="max-w-5xl">
       <DocContentClient
         rawContent={rawContent}
         isHtmlFile={isHtmlFile}
         frontMatterTitle={frontMatter?.title}
-        useShadowDOM={useShadowDOM} // Pass the new flag
+        useShadowDOM={useShadowDOM}
+        availableThemes={availableThemes}
       />
     </div>
   );

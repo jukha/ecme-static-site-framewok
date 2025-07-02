@@ -1,180 +1,212 @@
+// app/docs/[...slug]/components/DocContentClient.tsx
+
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'; // Import useLayoutEffect
 import Loading from '@/components/shared/Loading';
 import * as cheerio from 'cheerio';
 import hljs from 'highlight.js';
 
-// Import your custom theme hook
-import { MODE_DARK } from '@/constants/theme.constant'; // Adjust path if necessary
+import { MODE_DARK } from '@/constants/theme.constant';
 import useTheme from '@/utils/hooks/useTheme';
+import HighlightThemeSwitcher from './HighlightThemeSwitcher';
+
 
 interface DocContentClientProps {
-  rawContent: string;
-  isHtmlFile: boolean;
-  frontMatterTitle?: string;
-  useShadowDOM: boolean;
+    rawContent: string;
+    isHtmlFile: boolean;
+    frontMatterTitle?: string;
+    useShadowDOM: boolean;
+    availableThemes: string[];
 }
 
-const DocContentClient: React.FC<DocContentClientProps> = ({ rawContent, isHtmlFile, frontMatterTitle, useShadowDOM }) => {
-  const [processedHtml, setProcessedHtml] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const shadowHostRef = useRef<HTMLDivElement>(null);
+const DocContentClient: React.FC<DocContentClientProps> = ({
+    rawContent,
+    isHtmlFile,
+    frontMatterTitle,
+    useShadowDOM,
+    availableThemes,
+}) => {
+    const [processedHtml, setProcessedHtml] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const shadowHostRef = useRef<HTMLDivElement>(null);
 
-  // NEW: Use your custom theme hook to get the current mode
-  const mode = useTheme((state) => state.mode);
-  const isDarkMode = mode === MODE_DARK; // Derive isDarkMode from your theme's mode
+    const mode = useTheme((state) => state.mode);
+    const isDarkMode = mode === MODE_DARK;
 
-  const HIGHLIGHT_JS_THEME_URL = '/highlight-js-themes/dracula.css';
-
-  // Removed the previous useEffect for dark mode detection.
-  // The 'mode' from useTheme is reactive, so changes will trigger the main effect.
-
-  useEffect(() => {
-    const process = async () => {
-      setIsLoading(true);
-      let currentHtmlContent = rawContent;
-
-      try {
-        if (isHtmlFile) {
-          const $ = cheerio.load(rawContent);
-
-          // 1. --- Apply Code Highlighting (Existing Logic) ---
-          if ($('pre code').length > 0) {
-            $('pre code').each((_, el) => {
-              const code = $(el);
-              const text = code.text();
-              let lang = '';
-              const cls = code.attr('class');
-              if (cls) {
-                const match = cls.match(/(?:lang|language)-([a-zA-Z0-9]+)/);
-                if (match) lang = match[1];
-              }
-              const highlighted = lang && hljs.getLanguage(lang)
-                ? hljs.highlight(text, { language: lang, ignoreIllegals: true }).value
-                : hljs.highlightAuto(text).value;
-              code.html(highlighted).addClass(`hljs language-${lang}`);
-            });
-          }
-
-          // 2. --- CSS Selector Transformation & Dark Mode Filter Injection (Only if useShadowDOM) ---
-          if (useShadowDOM) {
-            $('style').each((_, el) => {
-              const styleContent = $(el).html();
-              if (styleContent) {
-                let transformedStyleContent = styleContent;
-
-                transformedStyleContent = transformedStyleContent.replace(/:root\s*\{/g, ':host {');
-                transformedStyleContent = transformedStyleContent.replace(/html\s*\{/g, ':host {');
-                transformedStyleContent = transformedStyleContent.replace(/body\s*\{/g, ':host {');
-
-                $(el).html(transformedStyleContent);
-              }
-            });
-
-            // Inject dark mode filter CSS
-            const darkModeFilterStyle = `
-              :host {
-                /* Apply invert filter if dark mode is active */
-                filter: ${isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'};
-                transition: filter 0.3s ease; /* Optional: smooth transition */
-              }
-              /* Re-invert images and videos that should not be inverted */
-              :host img, :host video {
-                filter: ${isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'};
-              }
-            `;
-            const darkModeStyleTag = `<style class="dark-mode-filter-style">${darkModeFilterStyle}</style>`;
-
-            // Check if the style tag already exists (for re-renders)
-            // If it exists, update its content; otherwise, append it.
-            if ($('.dark-mode-filter-style').length) {
-              $('.dark-mode-filter-style').html(darkModeFilterStyle);
-            } else if ($('head').length) {
-              $('head').append(darkModeStyleTag);
-            } else {
-              $.root().append(darkModeStyleTag); // Use append, not prepend, for consistency with other appends
-            }
+    // Initialize themeTargetDocument to null, it will be set dynamically
+    const [themeTargetDocument, setThemeTargetDocument] = useState<Document | ShadowRoot | null>(null);
 
 
-            // 3. --- Inject highlight.js theme link into the content ---
-            const highlightStyleLink = `<link rel="stylesheet" href="${HIGHLIGHT_JS_THEME_URL}">`;
-            if ($('head').length) {
-              $('head').prepend(highlightStyleLink);
-            } else if ($('body').length) {
-              $('body').prepend(highlightStyleLink);
-            } else {
-              $.root().prepend(highlightStyleLink);
-            }
+    // This useEffect processes the raw content (HTML via Cheerio)
+    useEffect(() => {
+        console.log('DocContentClient: processContent Effect Running');
+        const processContent = async () => {
+            setIsLoading(true);
+            let currentHtmlContent = rawContent;
 
-            // Get the final HTML content after all Cheerio modifications
-            currentHtmlContent = $.root().html() || $.html();
+            try {
+                if (isHtmlFile) {
+                    const $ = cheerio.load(rawContent);
 
-          } else {
-            // This block is for HTML files that DO NOT need Shadow DOM
-            const $ = cheerio.load(rawContent);
+                    // 1. --- Apply Code Highlighting (Existing Logic, for any <pre><code> found in HTML) ---
+                    if ($('pre code').length > 0) {
+                        $('pre code').each((_, el) => {
+                            const code = $(el);
+                            const text = code.text();
+                            let lang = '';
+                            const cls = code.attr('class');
+                            if (cls) {
+                                const match = cls.match(/(?:lang|language)-([a-zA-Z0-9]+)/);
+                                if (match) lang = match[1];
+                            }
+                            const highlighted = lang && hljs.getLanguage(lang)
+                                ? hljs.highlight(text, { language: lang, ignoreIllegals: true }).value
+                                : hljs.highlightAuto(text).value;
+                            code.html(highlighted).addClass(`hljs language-${lang}`);
+                        });
+                    }
 
-            if ($('pre code').length > 0) {
-              $('pre code').each((_, el) => {
-                const code = $(el);
-                const text = code.text();
-                let lang = '';
-                const cls = code.attr('class');
-                if (cls) {
-                  const match = cls.match(/(?:lang|language)-([a-zA-Z0-9]+)/);
-                  if (match) lang = match[1];
+                    // 2. --- CSS Selector Transformation & Dark Mode Filter Injection (Only if useShadowDOM) ---
+                    if (useShadowDOM) {
+                        $('style').each((_, el) => {
+                            const styleContent = $(el).html();
+                            if (styleContent) {
+                                let transformedStyleContent = styleContent;
+
+                                transformedStyleContent = transformedStyleContent.replace(/:root\s*\{/g, ':host {');
+                                transformedStyleContent = transformedStyleContent.replace(/html\s*\{/g, ':host {');
+                                transformedStyleContent = transformedStyleContent.replace(/body\s*\{/g, ':host {');
+
+                                $(el).html(transformedStyleContent);
+                            }
+                        });
+
+                        const darkModeFilterStyle = `
+                            :host {
+                                filter: ${isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'};
+                                transition: filter 0.3s ease;
+                            }
+                            :host img, :host video {
+                                filter: ${isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'};
+                            }
+                        `;
+                        const darkModeStyleTag = `<style class="dark-mode-filter-style">${darkModeFilterStyle}</style>`;
+
+                        // Ensure only one dark mode filter style tag is appended if it's already there
+                        if ($('.dark-mode-filter-style').length) {
+                            $('.dark-mode-filter-style').html(darkModeFilterStyle);
+                        } else if ($('head').length) {
+                            $('head').append(darkModeStyleTag);
+                        } else {
+                            $.root().append(darkModeStyleTag);
+                        }
+
+                        currentHtmlContent = $.html();
+                    } else {
+                        currentHtmlContent = $.html();
+                    }
+                } else {
+                    currentHtmlContent = rawContent;
                 }
-                const highlighted = lang && hljs.getLanguage(lang)
-                  ? hljs.highlight(text, { language: lang, ignoreIllegals: true }).value
-                  : hljs.highlightAuto(text).value;
-                code.html(highlighted).addClass(`hljs language-${lang}`);
-              });
+
+                setProcessedHtml(currentHtmlContent);
+
+            } catch (err) {
+                console.error('DocContentClient: Client processing error:', err);
+            } finally {
+                setIsLoading(false);
             }
-            currentHtmlContent = $.root().html() || $.html();
-          }
-        } else {
-          // Markdown was already rendered on server
-          currentHtmlContent = rawContent;
+        };
+
+        processContent();
+    }, [rawContent, isHtmlFile, useShadowDOM, mode]);
+
+
+    // NEW useEffect for Shadow DOM content injection AND setting themeTargetDocument
+    // We use useLayoutEffect here to ensure the Shadow DOM is attached
+    // and themeTargetDocument is set before the browser paints.
+    useLayoutEffect(() => {
+        if (!isLoading && useShadowDOM && isHtmlFile && shadowHostRef.current) {
+            let shadowRoot: ShadowRoot;
+            if (shadowHostRef.current.shadowRoot) {
+                shadowRoot = shadowHostRef.current.shadowRoot;
+                console.log('DocContentClient: Reusing existing ShadowRoot.');
+            } else {
+                shadowRoot = shadowHostRef.current.attachShadow({ mode: 'open' });
+                console.log('DocContentClient: Attached new ShadowRoot.');
+            }
+
+            // Always set themeTargetDocument here as soon as ShadowRoot is available
+            setThemeTargetDocument(shadowRoot);
+
+            // Clear existing content before injecting new content
+            shadowRoot.innerHTML = '';
+
+            // Create a temporary div to parse the processed HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = processedHtml;
+
+            // Append all children of the temporary div to the shadowRoot
+            while (tempDiv.firstChild) {
+                shadowRoot.appendChild(tempDiv.firstChild);
+            }
+
+            // Handle external scripts within the Shadow DOM (re-create to ensure execution)
+            shadowRoot.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent; // Copy script content
+                oldScript.parentNode?.replaceChild(newScript, oldScript);
+            });
+
+        } else if (!isLoading && !useShadowDOM) {
+            // For Markdown or non-Shadow DOM HTML, target is always the main document.
+            // Ensure this is only run on client-side (after hydration).
+            if (typeof document !== 'undefined') {
+                if (themeTargetDocument !== document) {
+                    console.log('DocContentClient: Setting target to main document.');
+                    setThemeTargetDocument(document);
+                }
+            }
+            // Explicitly clear shadowRoot if we navigated from a shadow DOM page to a non-shadow DOM one.
+            if (shadowHostRef.current?.shadowRoot) {
+                console.log('DocContentClient: Clearing existing shadowRoot from previous state.');
+                shadowHostRef.current.shadowRoot.innerHTML = '';
+            }
+            // If not using Shadow DOM, ensure themeTargetDocument is not a ShadowRoot.
+            if (themeTargetDocument && (themeTargetDocument as ShadowRoot).host) { // Check if it's a ShadowRoot
+                 console.log('DocContentClient: Clearing themeTargetDocument as it was ShadowRoot and not needed.');
+                 setThemeTargetDocument(null); // Or set to document if it's the default
+            }
+        } else if (isLoading) {
+             console.log('DocContentClient: Still loading, themeTargetDocument not set yet.');
+             setThemeTargetDocument(null); // Ensure null while loading to prevent premature injection attempts
         }
+        console.log('DocContentClient: Final themeTargetDocument state value:', themeTargetDocument);
+    }, [isLoading, useShadowDOM, isHtmlFile, processedHtml, shadowHostRef.current]);
 
-        setProcessedHtml(currentHtmlContent);
 
-      } catch (err) {
-        console.error('Client processing error:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    return (
+        <div className={!useShadowDOM ? 'prose dark:prose-invert max-w-none mx-auto p-8' : ''}>
+            {frontMatterTitle && <h1>{frontMatterTitle}</h1>}
 
-    // The effect will now re-run when rawContent, isHtmlFile, useShadowDOM, or 'mode' changes
-    process();
-  }, [rawContent, isHtmlFile, useShadowDOM, mode]); // Changed isDarkMode to mode in dependencies
+            {/* Render the reusable HighlightThemeSwitcher component */}
+            <HighlightThemeSwitcher
+                availableThemes={availableThemes}
+                // targetDocument={themeTargetDocument} // Pass the dynamically determined target
+            />
 
-  useEffect(() => {
-    if (!isLoading && isHtmlFile && useShadowDOM && shadowHostRef.current && processedHtml) {
-      if (shadowHostRef.current.attachShadow && !shadowHostRef.current.shadowRoot) {
-        const shadowRoot = shadowHostRef.current.attachShadow({ mode: 'open' });
-        shadowRoot.innerHTML = processedHtml;
-      } else if (shadowHostRef.current.shadowRoot) {
-        shadowHostRef.current.shadowRoot.innerHTML = processedHtml;
-      }
-    }
-    if (!useShadowDOM && shadowHostRef.current?.shadowRoot) {
-      shadowHostRef.current.shadowRoot.innerHTML = '';
-    }
-  }, [isLoading, isHtmlFile, processedHtml, useShadowDOM]);
-
-  return (
-    <div className={!useShadowDOM ? 'prose dark:prose-invert max-w-none mx-auto p-8' : ''}>
-      {frontMatterTitle && <h1>{frontMatterTitle}</h1>}
-      {isLoading
-        ? <div className="min-h-screen flex justify-center"><Loading type="cover" loading={isLoading} /></div>
-        : useShadowDOM && isHtmlFile
-          ? <div ref={shadowHostRef} />
-          : <div dangerouslySetInnerHTML={{ __html: processedHtml }} />
-      }
-    </div>
-  );
+            {isLoading
+                ? <div className="min-h-screen flex justify-center"><Loading type="cover" loading={isLoading} /></div>
+                : useShadowDOM && isHtmlFile
+                    ? <div ref={shadowHostRef} className="shadow-dom-container" />
+                    : <div dangerouslySetInnerHTML={{ __html: processedHtml }} />
+            }
+        </div>
+    );
 };
 
 export default DocContentClient;

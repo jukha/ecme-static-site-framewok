@@ -11,6 +11,19 @@
       label: Landing Page
   subMenu: []
 
+- key: emoji
+  path: /emoji
+  title: Emoji Test
+  translateKey: nav.emoji
+  icon: ai-chat
+  type: ITEM
+  authority: []
+  meta:
+    description:
+      translateKey: nav.chatDesc  
+      label: Landing Page
+  subMenu: []
+
 - key: plugins-test
   path: /plugins-test
   title: Plugins Test

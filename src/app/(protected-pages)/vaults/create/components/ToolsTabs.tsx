@@ -11,20 +11,20 @@ const ToolsTabs = () => {
     return (
         <Tabs defaultValue="tab1" variant="pill">
             <TabList>
-                <TabNav value="tab1">ReactFlow</TabNav>
+                <TabNav value="tab1">JSON-Crack</TabNav>
                 <TabNav value="tab2">Monaco Editor</TabNav>
-                <TabNav value="tab3">JSON-Crack</TabNav>
+                {/* <TabNav value="tab3">ReactFlow</TabNav> */}
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
-                    <ReactFlowDemo />
+                    <JSONCrackEditor />
                 </TabContent>
                 <TabContent value="tab2">
                     <MonoEditor />
                 </TabContent>
-                <TabContent value="tab3">
-                    <JSONCrackEditor />
-                </TabContent>
+                {/* <TabContent value="tab3">
+                    <ReactFlowDemo />
+                </TabContent> */}
             </div>
         </Tabs>
     )

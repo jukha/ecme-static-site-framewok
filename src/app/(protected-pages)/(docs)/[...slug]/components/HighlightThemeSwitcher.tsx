@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { MdPalette } from 'react-icons/md';
 
+const DEFAULT_CODE_HIGHLIGHT_THEME = "atom-one-dark-reasonable"
+
 interface HighlightThemeSwitcherProps {
   availableThemes: string[];
   // targetDocument: Document | ShadowRoot | null; // This prop becomes less critical for theme loading
@@ -13,10 +15,11 @@ const HighlightThemeSwitcher: React.FC<HighlightThemeSwitcherProps> = ({
   // targetDocument, // No longer directly used for theme injection
 }) => {
   const [selectedTheme, setSelectedTheme] = useState<string>(() => {
+    console.log('themee', availableThemes)
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('highlightjs-theme') || availableThemes[0] || 'dracula';
+      return localStorage.getItem('highlightjs-theme') || DEFAULT_CODE_HIGHLIGHT_THEME;
     }
-    return availableThemes[0] || 'dracula';
+    return DEFAULT_CODE_HIGHLIGHT_THEME;
   });
 
   const [isOpen, setIsOpen] = useState<boolean>(false);

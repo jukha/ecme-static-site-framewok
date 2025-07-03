@@ -53,10 +53,12 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
                                     ref={ref}
                                     {...props}
                                     active={pathname.includes(nav.key.split('.').join('/'))}
+                                    // active={pathname === `/${nav.key.split('.').join('/')}`}
                                     asElement="button"
                                 >
                                     <div className="flex items-center gap-1">
                                         <span>
+                                            Hello
                                             {t(nav.translateKey, nav.title)}
                                         </span>
                                         <TbChevronDown />
@@ -82,7 +84,8 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
                             path={nav.path}
                             isExternalLink={nav.isExternalLink}
                             // active={activedRoute?.key === nav.key}
-                            active={pathname.includes(nav.key.split('.').join('/'))}
+                            // active={pathname.includes(nav.key.split('.').join('/'))}
+                            active={pathname === `/${nav.key.split('.').join('/')}`}
                             asElement="a"
                         >
                             <div className="flex items-center gap-1">

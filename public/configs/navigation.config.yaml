@@ -11,6 +11,19 @@
       label: Landing Page
   subMenu: []
 
+- key: md-plugins-test
+  path: /md-plugins-test
+  title: Md Plugins Test
+  translateKey: nav.md-plugins-test
+  icon: concepts
+  type: ITEM
+  authority: []
+  meta:
+    description:
+      translateKey: nav.md-plugins-test  
+      label: MD Plugins Test
+  subMenu: []
+
 - key: emoji
   path: /emoji
   title: Emoji Test
